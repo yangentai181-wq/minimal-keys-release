@@ -4,8 +4,9 @@
 #include <dt-bindings/zmk/pointing.h>
 
 #define MOUSE 4
-#define SCROLL 5
+#define FN 5
 #define BT 6
+#define SCROLL 7
 
 &mt {
     flavor = "balanced";
@@ -13,26 +14,6 @@
 };
 
 / {
-    combos {
-        compatible = "zmk,combos";
-
-        // K+L combo to toggle scroll layer (active in Mouse and Scroll layers)
-        combo_scroll {
-            timeout-ms = <100>;
-            key-positions = <19 20>;
-            bindings = <&tog SCROLL>;
-            layers = <MOUSE SCROLL>;
-        };
-    };
-
-    conditional_layers {
-        compatible = "zmk,conditional-layers";
-        bt_layer {
-            if-layers = <1 2>;
-            then-layer = <BT>;
-        };
-    };
-
     macros {
         to_layer_0: to_layer_0 {
             compatible = "zmk,behavior-macro-one-param";
@@ -42,92 +23,93 @@
         };
     };
 
-    behaviors {
-        lt_to_layer_0: lt_to_layer_0 {
-            compatible = "zmk,behavior-hold-tap";
-            label = "LAYER_TAP_TO_0";
-            bindings = <&mo>, <&to_layer_0>;
-            #binding-cells = <2>;
-            tapping-term-ms = <200>;
-        };
-    };
-
     keymap {
         compatible = "zmk,keymap";
 
-        // Layer 0: Base (US QWERTY)
+        // Layer 0: Default (US QWERTY)
         default_layer {
             bindings = <
-&kp Q           &kp W      &kp E     &kp R                &kp T                                                  &kp Y              &kp U      &kp I      &kp O    &kp P
-&kp A           &kp S      &kp D     &kp F                &kp G          &mkp MB1          &kp LSHIFT             &kp H              &kp J      &kp K      &kp L    &kp MINUS
-&mt LSHIFT Z    &kp X      &kp C     &kp V                &kp B          &mkp MB2          &kp RCMD               &kp N              &kp M      &kp COMMA  &kp DOT  &mt RSHIFT SLASH
-&kp TAB         &kp LCTRL  &kp LALT  &mt LCMD LANGUAGE_2  &lt 1 SPACE    &lt 2 BACKSPACE   &lt 3 ENTER            &mt RCMD LANGUAGE_1                                &none
+&kp Q           &kp W      &kp E      &kp R                    &kp T                                                              &kp Y              &kp U      &kp I      &kp O    &kp P
+&kp A           &kp S      &kp D      &kp F                    &kp G              &lt 1 LC(UP)          &lt FN ESC                 &kp H              &kp J      &kp K      &kp L    &kp BACKSPACE
+&mt LSHIFT Z    &kp X      &kp C      &kp V                    &kp B              &mo 2                 &lt BT MINUS               &kp N              &kp M      &kp COMMA  &kp DOT  &mt RSHIFT SLASH
+&kp LCMD        &kp LALT   &kp LCTRL  &lt FN TAB               &lt SCROLL LANGUAGE_2  &lt 3 ENTER       &lt 3 SPACE                &kp LANGUAGE_1                                     &kp ESC
             >;
             sensor-bindings = <&inc_dec_kp C_VOLUME_DOWN C_VOLUME_UP>;
         };
 
-        // Layer 1: Symbols
-        symbol_layer {
-            bindings = <
-&kp EXCL              &kp AT                &kp HASH              &kp DOLLAR  &kp PERCENT                                    &kp CARET  &kp AMPS   &kp ASTRK  &kp LPAR  &kp RPAR
-&kp LS(LG(NUMBER_3))  &kp LS(LG(NUMBER_4))  &kp LS(LG(NUMBER_5))  &none       &none          &trans        &trans           &kp MINUS  &kp EQUAL  &kp LBKT   &kp RBKT  &kp BSLH
-&trans                &none                 &none                 &none       &none          &trans        &trans           &none      &none      &kp SEMI   &kp SQT   &kp GRAVE
-&kp ESC               &trans                &trans                &trans      &trans         &trans        &trans           &trans                                      &trans
-            >;
-            sensor-bindings = <&inc_dec_kp C_VOLUME_DOWN C_VOLUME_UP>;
-        };
-
-        // Layer 2: Numbers & F-keys (Phone-style numpad right, F-keys left)
+        // Layer 1: Numbers (Phone-style numpad right)
         number_layer {
             bindings = <
-&kp F1    &kp F2   &kp F3   &kp F4   &kp F5                                                &kp N1   &kp N2  &kp N3  &none      &none
-&kp F6    &kp F7   &kp F8   &kp F9   &kp F10        &trans        &trans                    &kp N4   &kp N5  &kp N6  &kp PLUS   &kp MINUS
-&kp F11   &kp F12  &none    &none    &none          &trans        &trans                    &kp N7   &kp N8  &kp N9  &kp ASTRK  &kp SLASH
-&trans    &trans   &trans   &trans   &trans         &trans        &kp DOT                   &kp N0                               &trans
+&trans    &trans   &trans   &trans   &trans                                                          &kp N1   &kp N2  &kp N3  &trans     &trans
+&trans    &trans   &trans   &trans   &trans         &trans            &trans                          &kp N4   &kp N5  &kp N6  &kp PLUS   &kp MINUS
+&trans    &trans   &trans   &trans   &trans         &trans            &trans                          &kp N7   &kp N8  &kp N9  &kp ASTRK  &kp SLASH
+&trans    &trans   &trans   &trans   &trans         &trans            &kp DOT                         &kp N0                              &trans
             >;
             sensor-bindings = <&inc_dec_kp C_VOLUME_DOWN C_VOLUME_UP>;
         };
 
-        // Layer 3: Navigation (Arrows/Desktop right, Dock/Screenshots left)
-        move_layer {
+        // Layer 2: Navigation (Arrows & Desktop control)
+        arrow_layer {
             bindings = <
-&none          &none         &none         &none          &none                                                &kp LC(UP)     &kp LC(LEFT)  &kp UP     &kp LC(RIGHT)  &kp LC(DOWN)
-&none          &none         &none         &kp LG(LA(D))  &none          &trans        &trans                  &kp HOME       &kp LEFT      &kp DOWN   &kp RIGHT      &kp END
-&none          &none         &none         &none          &none          &trans        &trans                  &kp C_PREV     &kp LG(LBKT)  &none      &kp LG(RBKT)   &kp C_NEXT
-&trans         &trans        &trans        &trans         &trans         &trans        &trans                  &trans                                                  &trans
+&trans         &trans        &trans        &trans         &trans                                                          &kp LC(UP)     &kp LC(LEFT)  &kp UP     &kp LC(RIGHT)  &kp LC(DOWN)
+&trans         &trans        &trans        &trans         &trans         &trans            &trans                          &kp HOME       &kp LEFT      &kp DOWN   &kp RIGHT      &kp END
+&trans         &trans        &trans        &trans         &trans         &trans            &trans                          &kp C_PREV     &kp LG(LBKT)  &trans     &kp LG(RBKT)   &kp C_NEXT
+&trans         &trans        &trans        &trans         &trans         &trans            &trans                          &trans                                                  &trans
             >;
             sensor-bindings = <&inc_dec_kp C_BRI_DN C_BRI_UP>;
+        };
+
+        // Layer 3: Symbols
+        symbol_layer {
+            bindings = <
+&kp EXCL       &kp AT     &kp HASH   &kp DOLLAR  &kp PERCENT                                                  &kp CARET  &kp AMPS   &kp ASTRK  &kp LPAR  &kp RPAR
+&kp TILDE      &kp PIPE   &kp LBRC   &kp RBRC    &kp PLUS       &trans            &trans                       &kp UNDER  &kp EQUAL  &kp LBKT   &kp RBKT  &kp BSLH
+&trans         &trans     &trans     &trans      &trans         &trans            &trans                       &trans     &trans     &kp SEMI   &kp SQT   &kp GRAVE
+&trans         &trans     &trans     &trans      &trans         &trans            &trans                       &trans                                      &trans
+            >;
+            sensor-bindings = <&inc_dec_kp C_VOLUME_DOWN C_VOLUME_UP>;
         };
 
         // Layer 4: Auto-Mouse (activated by trackball movement, character keys return to L0)
         MOUSE {
             bindings = <
-&to_layer_0 Q       &to_layer_0 W  &to_layer_0 E  &to_layer_0 R  &to_layer_0 T                                        &to_layer_0 Y  &to_layer_0 U  &to_layer_0 I      &to_layer_0 O    &to_layer_0 P
-&to_layer_0 A       &to_layer_0 S  &to_layer_0 D  &to_layer_0 F  &to_layer_0 G  &mkp MB1      &trans                   &to_layer_0 H  &to_layer_0 J  &mkp MB1           &mkp MB2         &to_layer_0 MINUS
-&to_layer_0 Z       &to_layer_0 X  &to_layer_0 C  &to_layer_0 V  &to_layer_0 B  &mkp MB2      &trans                   &to_layer_0 N  &to_layer_0 M  &to_layer_0 COMMA  &to_layer_0 DOT  &to_layer_0 SLASH
-&trans              &trans         &trans         &trans         &trans         &trans        &trans                   &trans                                                               &trans
+&to_layer_0 Q       &to_layer_0 W  &to_layer_0 E  &to_layer_0 R  &to_layer_0 T                                                &to_layer_0 Y  &to_layer_0 U  &to_layer_0 I      &to_layer_0 O    &to_layer_0 P
+&to_layer_0 A       &to_layer_0 S  &to_layer_0 D  &to_layer_0 F  &to_layer_0 G  &mkp MB1          &trans                       &to_layer_0 H  &to_layer_0 J  &mkp MB1           &mkp MB2         &to_layer_0 BACKSPACE
+&to_layer_0 Z       &to_layer_0 X  &to_layer_0 C  &to_layer_0 V  &to_layer_0 B  &mkp MB2          &trans                       &to_layer_0 N  &to_layer_0 M  &to_layer_0 COMMA  &to_layer_0 DOT  &to_layer_0 SLASH
+&trans              &trans         &trans         &trans         &trans         &trans            &trans                       &trans                                                               &trans
             >;
         };
 
-        // Layer 5: Scroll (trackball → scroll wheel, toggled by K+L combo in Mouse layer)
-        SCROLL {
+        // Layer 5: Function keys (F1-F12 on left hand)
+        fn_layer {
             bindings = <
-&trans  &trans  &trans  &trans  &trans                    &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans    &trans  &trans                          &trans
+&kp F1    &kp F2   &kp F3   &kp F4   &kp F5                                                          &trans   &trans  &trans  &trans  &trans
+&kp F6    &kp F7   &kp F8   &kp F9   &kp F10        &trans            &trans                          &trans   &trans  &trans  &trans  &trans
+&kp F11   &kp F12  &trans   &trans   &trans         &trans            &trans                          &trans   &trans  &trans  &trans  &trans
+&trans    &trans   &trans   &trans   &trans         &trans            &trans                          &trans                            &trans
             >;
+            sensor-bindings = <&inc_dec_kp C_BRI_DN C_BRI_UP>;
         };
 
-        // Layer 6: Bluetooth (conditional: hold L1 + press L2 simultaneously)
+        // Layer 6: Bluetooth
         bt_layer {
             bindings = <
-&bt BT_SEL 0   &bt BT_SEL 1   &bt BT_SEL 2   &bt BT_SEL 3  &bt BT_CLR_ALL                                   &none  &none  &none  &none  &none
-&bt BT_CLR     &bt BT_DISC 0  &bt BT_DISC 1  &bt BT_DISC 2  &bt BT_DISC 3  &trans        &trans              &none  &none  &none  &none  &none
-&bootloader    &none          &none          &none          &none          &trans        &trans              &none  &none  &none  &none  &bootloader
-&trans         &trans         &trans         &trans         &trans         &trans        &trans              &trans                       &trans
+&bt BT_SEL 0   &bt BT_SEL 1   &bt BT_SEL 2   &bt BT_SEL 3  &bt BT_CLR_ALL                                         &trans  &trans  &trans  &trans  &trans
+&bt BT_CLR     &bt BT_DISC 0  &bt BT_DISC 1  &bt BT_DISC 2  &bt BT_DISC 3  &trans            &trans                &trans  &trans  &trans  &trans  &trans
+&bootloader    &trans         &trans         &trans         &trans         &trans            &trans                &trans  &trans  &trans  &trans  &bootloader
+&trans         &trans         &trans         &trans         &trans         &trans            &trans                &trans                          &trans
             >;
             sensor-bindings = <&inc_dec_kp C_VOLUME_DOWN C_VOLUME_UP>;
+        };
+
+        // Layer 7: Scroll (trackball acts as scroll wheel while holding 英/scroll key)
+        SCROLL {
+            bindings = <
+&trans  &trans  &trans  &trans  &trans                              &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans            &trans    &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans            &trans    &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans            &trans    &trans                          &trans
+            >;
         };
     };
 };
