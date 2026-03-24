@@ -4,8 +4,8 @@ manifest:
       url-base: https://github.com/zmkfirmware
     - name: hyhy-masa
       url-base: https://github.com/hyhy-masa
-    - name: caksoylar  # <-- new entry
-      url-base: https://github.com/caksoylar  
+    - name: caksoylar # <-- new entry
+      url-base: https://github.com/caksoylar
   projects:
     - name: zmk
       remote: zmkfirmware
@@ -14,8 +14,8 @@ manifest:
     - name: zmk-pmw3610-driver
       remote: hyhy-masa
       revision: main
-    - name: zmk-rgbled-widget  # <-- new entry
+    - name: zmk-rgbled-widget # <-- new entry
       remote: caksoylar
-      revision: main
+      revision: a3510c9de46de8b42c803286f4978466c6ea3916 # v0.3.0互換の最終版にピン留め
   self:
     path: config
