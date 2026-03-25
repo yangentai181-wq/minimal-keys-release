@@ -1,0 +1,1302 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>minimal-keys Keymap Viewer</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans",
+          sans-serif;
+        background: #1a1b26;
+        color: #c0caf5;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 24px 16px;
+      }
+      h1 {
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+      }
+      .subtitle {
+        font-size: 13px;
+        color: #565f89;
+        margin: 4px 0 20px;
+      }
+      .tabs {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .tab {
+        padding: 7px 14px;
+        border-radius: 8px;
+        background: #24283b;
+        border: 2px solid transparent;
+        cursor: pointer;
+        font-size: 13px;
+        color: #9aa5ce;
+        transition: all 0.15s;
+        user-select: none;
+        text-align: center;
+        line-height: 1.3;
+      }
+      .tab:hover {
+        background: #2f3347;
+      }
+      .tab.active {
+        border-color: var(--lc);
+        color: var(--lc);
+        background: color-mix(in srgb, var(--lc) 12%, #24283b);
+      }
+      .tab .num {
+        font-weight: 700;
+        margin-right: 3px;
+      }
+      .tab .act {
+        display: block;
+        font-size: 10px;
+        color: #565f89;
+        margin-top: 1px;
+      }
+      #kb-wrap {
+        position: relative;
+        margin: 0 auto;
+        overflow: visible;
+      }
+      #kb {
+        position: relative;
+        width: 1300px;
+        height: 400px;
+        transform-origin: top left;
+      }
+      .key {
+        position: absolute;
+        width: 92px;
+        height: 92px;
+        border-radius: 8px;
+        background: linear-gradient(160deg, #2f3241, #282a3a);
+        border: 1.5px solid #3b3e52;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        font-weight: 500;
+        color: #c0caf5;
+        cursor: default;
+        transition:
+          border-color 0.15s,
+          opacity 0.15s,
+          box-shadow 0.15s;
+        overflow: hidden;
+      }
+      .key:hover {
+        border-color: var(--lc);
+        box-shadow: 0 0 12px color-mix(in srgb, var(--lc) 25%, transparent);
+        z-index: 10;
+      }
+      .key.ht {
+        justify-content: space-between;
+        padding: 10px 0;
+      }
+      .key .tap {
+        font-size: 15px;
+        font-weight: 600;
+      }
+      .key .hold {
+        font-size: 10px;
+        color: #7982a9;
+        padding: 2px 6px;
+        background: #1a1b26;
+        border-radius: 4px;
+      }
+      .key .sep {
+        width: 55%;
+        height: 1px;
+        background: #3b3e52;
+      }
+      .key.tr {
+        opacity: 0.4;
+        border-style: dashed;
+        border-color: #3b3e52;
+      }
+      .key.tr .src {
+        position: absolute;
+        bottom: 3px;
+        right: 4px;
+        font-size: 8px;
+        color: #565f89;
+        background: #1a1b26;
+        padding: 1px 4px;
+        border-radius: 3px;
+      }
+      .key.to0 .badge {
+        font-size: 9px;
+        color: #7aa2f7;
+        margin-top: 1px;
+      }
+      .key.mk {
+        border-color: color-mix(in srgb, #f7768e 35%, #3b3e52);
+      }
+      .key.bt {
+        border-color: color-mix(in srgb, #7381d8 40%, #3b3e52);
+      }
+      .key.boot {
+        border-color: #f7768e;
+        color: #f7768e;
+      }
+      .key.mo .mo-sub {
+        font-size: 10px;
+        color: #7982a9;
+      }
+      .key.mo .mo-name {
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .enc {
+        position: absolute;
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        border: 2px solid #3b3e52;
+        background: linear-gradient(160deg, #2a2d3e, #232536);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        left: 613px;
+        top: 140px;
+      }
+      .enc .enc-title {
+        font-size: 8px;
+        color: #565f89;
+        letter-spacing: 0.5px;
+        margin-bottom: 2px;
+      }
+      .enc .enc-row {
+        display: flex;
+        gap: 6px;
+        font-size: 11px;
+        font-weight: 500;
+      }
+      .enc .ccw {
+        color: #7dcfff;
+      }
+      .enc .cw {
+        color: #ff9e64;
+      }
+      .legend {
+        margin-top: 24px;
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+        justify-content: center;
+        font-size: 12px;
+        color: #565f89;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .leg-sw {
+        width: 22px;
+        height: 16px;
+        border-radius: 4px;
+        border: 1.5px solid #3b3e52;
+        background: #2f3241;
+      }
+      .leg-sw.tr-sw {
+        border-style: dashed;
+        opacity: 0.45;
+      }
+      .leg-sw.ht-sw {
+        background: linear-gradient(to bottom, #2f3241 50%, #1a1b26 50%);
+      }
+      .leg-sw.to0-sw {
+        position: relative;
+      }
+      .leg-sw.to0-sw::after {
+        content: "\2192";
+        position: absolute;
+        right: 0;
+        bottom: -2px;
+        font-size: 8px;
+        color: #7aa2f7;
+      }
+      .leg-sw.boot-sw {
+        border-color: #f7768e;
+      }
+      .help {
+        margin-top: 14px;
+        font-size: 11px;
+        color: #414868;
+        text-align: center;
+      }
+
+      /* ── Capture mode ── */
+      .header-row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        width: 100%;
+        max-width: 1300px;
+        justify-content: center;
+        position: relative;
+      }
+      .capture-btn {
+        position: absolute;
+        right: 0;
+        padding: 6px 14px;
+        border-radius: 8px;
+        background: #24283b;
+        border: 2px solid #3b3e52;
+        color: #9aa5ce;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s;
+        user-select: none;
+        white-space: nowrap;
+      }
+      .capture-btn:hover {
+        background: #2f3347;
+      }
+      .capture-btn.active {
+        border-color: #f7768e;
+        color: #f7768e;
+        background: color-mix(in srgb, #f7768e 12%, #24283b);
+      }
+      .capture-indicator {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: #f7768e;
+        z-index: 100;
+        animation: pulse-bar 1.5s ease-in-out infinite;
+      }
+      .capture-indicator.visible {
+        display: block;
+      }
+      @keyframes pulse-bar {
+        0%,
+        100% {
+          opacity: 0.4;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+
+      /* ── Key pressed highlight ── */
+      .key.pressed {
+        border-color: #f7768e !important;
+        box-shadow:
+          0 0 16px color-mix(in srgb, #f7768e 40%, transparent),
+          inset 0 0 8px color-mix(in srgb, #f7768e 15%, transparent) !important;
+        transform: scale(1.06);
+        z-index: 20 !important;
+        transition:
+          border-color 0.05s,
+          box-shadow 0.05s,
+          transform 0.05s;
+      }
+
+      /* ── Key history panel ── */
+      .history-panel {
+        margin-top: 16px;
+        width: 100%;
+        max-width: 1300px;
+        display: none;
+      }
+      .history-panel.visible {
+        display: block;
+      }
+      .history-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+      .history-title {
+        font-size: 12px;
+        color: #565f89;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+      .history-clear {
+        padding: 3px 10px;
+        border-radius: 6px;
+        background: #24283b;
+        border: 1px solid #3b3e52;
+        color: #565f89;
+        font-size: 11px;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .history-clear:hover {
+        color: #9aa5ce;
+        border-color: #565f89;
+      }
+      .history-scroll {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        padding: 8px 4px;
+        scrollbar-width: thin;
+        scrollbar-color: #3b3e52 transparent;
+      }
+      .history-scroll::-webkit-scrollbar {
+        height: 4px;
+      }
+      .history-scroll::-webkit-scrollbar-thumb {
+        background: #3b3e52;
+        border-radius: 2px;
+      }
+      .history-badge {
+        flex-shrink: 0;
+        padding: 5px 10px;
+        border-radius: 6px;
+        background: #24283b;
+        border: 1px solid #3b3e52;
+        font-size: 12px;
+        color: #c0caf5;
+        font-weight: 500;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        animation: badge-in 0.15s ease-out;
+      }
+      .history-badge .badge-time {
+        font-size: 9px;
+        color: #565f89;
+      }
+      @keyframes badge-in {
+        from {
+          opacity: 0;
+          transform: scale(0.8);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="capture-indicator" id="capture-indicator"></div>
+    <div class="header-row">
+      <div>
+        <h1>minimal-keys</h1>
+        <p class="subtitle">8-Layer Keymap Viewer &mdash; 43 keys + encoder</p>
+      </div>
+      <button class="capture-btn" id="capture-btn" title="Ctrl+K でトグル">
+        Capture: OFF
+      </button>
+    </div>
+    <div class="tabs" id="tabs"></div>
+    <div id="kb-wrap"><div id="kb"></div></div>
+    <div class="history-panel" id="history-panel">
+      <div class="history-header">
+        <span class="history-title">KEY HISTORY</span>
+        <button class="history-clear" id="history-clear">Clear</button>
+      </div>
+      <div class="history-scroll" id="history-scroll"></div>
+    </div>
+    <div class="legend">
+      <div class="legend-item">
+        <div class="leg-sw"></div>
+        通常キー
+      </div>
+      <div class="legend-item">
+        <div class="leg-sw ht-sw"></div>
+        ホールドタップ
+      </div>
+      <div class="legend-item">
+        <div class="leg-sw tr-sw"></div>
+        透過
+      </div>
+      <div class="legend-item">
+        <div class="leg-sw to0-sw"></div>
+        L0復帰
+      </div>
+      <div class="legend-item">
+        <div class="leg-sw boot-sw"></div>
+        Bootloader
+      </div>
+    </div>
+    <p class="help">
+      [1]~[8] レイヤー切替 / [&larr;][&rarr;] 前後移動 / [Ctrl+K] キャプチャ切替
+    </p>
+    <script>
+      "use strict";
+
+      /* ── Physical key positions from .dtsi (43 keys) ── */
+      const POS = [
+        [0, 0],
+        [100, 0],
+        [200, 0],
+        [300, 0],
+        [400, 0],
+        [800, 0],
+        [900, 0],
+        [1000, 0],
+        [1100, 0],
+        [1200, 0],
+        [0, 100],
+        [100, 100],
+        [200, 100],
+        [300, 100],
+        [400, 100],
+        [500, 100],
+        [700, 100],
+        [800, 100],
+        [900, 100],
+        [1000, 100],
+        [1100, 100],
+        [1200, 100],
+        [0, 200],
+        [100, 200],
+        [200, 200],
+        [300, 200],
+        [400, 200],
+        [500, 200],
+        [700, 200],
+        [800, 200],
+        [900, 200],
+        [1000, 200],
+        [1100, 200],
+        [1200, 200],
+        [0, 300],
+        [100, 300],
+        [200, 300],
+        [300, 300],
+        [400, 300],
+        [500, 300],
+        [700, 300],
+        [800, 300],
+        [1200, 300],
+      ];
+
+      /* ── Layer metadata ── */
+      const META = [
+        { name: "Default", color: "#7aa2f7", act: "Base layer" },
+        { name: "Numbers", color: "#ff9e64", act: "Hold: \u2303\u2191" },
+        { name: "Navigation", color: "#9ece6a", act: "Hold: Nav" },
+        { name: "Symbols", color: "#bb9af7", act: "Hold: Enter/Space" },
+        { name: "Mouse", color: "#f7768e", act: "Trackball auto" },
+        { name: "Function", color: "#7dcfff", act: "Hold: Tab/Esc" },
+        { name: "Bluetooth", color: "#7381d8", act: "Hold: -" },
+        { name: "Scroll", color: "#9aa5ce", act: "Hold: \u82f1" },
+      ];
+
+      /* ── Encoder bindings per layer ── */
+      const ENC = [
+        { ccw: "Vol-", cw: "Vol+" },
+        { ccw: "Vol-", cw: "Vol+" },
+        { ccw: "Bri-", cw: "Bri+" },
+        { ccw: "Vol-", cw: "Vol+" },
+        { ccw: "Vol-", cw: "Vol+" },
+        { ccw: "Bri-", cw: "Bri+" },
+        { ccw: "Vol-", cw: "Vol+" },
+        { ccw: "Vol-", cw: "Vol+" },
+      ];
+
+      /* ── Key helpers ── */
+      const T = { t: "trans" };
+      const kp = (l) => ({ t: "kp", l });
+      const lt = (tap, hold, hl) => ({ t: "lt", tap, hold, hl });
+      const mt = (tap, hold) => ({ t: "mt", tap, hold });
+      const mo = (hold, hl) => ({ t: "mo", hold, hl });
+      const t0 = (l) => ({ t: "to0", l });
+      const mk = (l) => ({ t: "mk", l });
+      const bt = (l) => ({ t: "bt", l });
+      const BT = { t: "boot" };
+
+      /* ── Keymap data (8 layers x 43 keys) ── */
+      const LAYERS = [
+        /* L0 Default */
+        [
+          kp("Q"),
+          kp("W"),
+          kp("E"),
+          kp("R"),
+          kp("T"),
+          kp("Y"),
+          kp("U"),
+          kp("I"),
+          kp("O"),
+          kp("P"),
+          kp("A"),
+          kp("S"),
+          kp("D"),
+          kp("F"),
+          kp("G"),
+          lt("\u2303\u2191", "L1", 1),
+          lt("Esc", "FN", 5),
+          kp("H"),
+          kp("J"),
+          kp("K"),
+          kp("L"),
+          kp("\u232b"),
+          mt("Z", "\u21e7"),
+          kp("X"),
+          kp("C"),
+          kp("V"),
+          kp("B"),
+          mo("Nav", 2),
+          lt("\u2212", "BT", 6),
+          kp("N"),
+          kp("M"),
+          kp(","),
+          kp("."),
+          mt("/", "\u21e7"),
+          kp("\u2318"),
+          kp("\u2325"),
+          kp("\u2303"),
+          lt("Tab", "FN", 5),
+          lt("\u304b\u306a", "Scroll", 7),
+          lt("Enter", "L3", 3),
+          lt("Space", "L3", 3),
+          kp("\u82f1"),
+          kp("Esc"),
+        ],
+        /* L1 Numbers */
+        [
+          T,
+          T,
+          T,
+          T,
+          T,
+          kp("1"),
+          kp("2"),
+          kp("3"),
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          kp("4"),
+          kp("5"),
+          kp("6"),
+          kp("+"),
+          kp("\u2212"),
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          kp("7"),
+          kp("8"),
+          kp("9"),
+          kp("*"),
+          kp("/"),
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          kp("."),
+          kp("0"),
+          T,
+        ],
+        /* L2 Navigation */
+        [
+          T,
+          T,
+          T,
+          T,
+          T,
+          kp("\u2303\u2191"),
+          kp("\u2303\u2190"),
+          kp("\u2191"),
+          kp("\u2303\u2192"),
+          kp("\u2303\u2193"),
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          kp("Home"),
+          kp("\u2190"),
+          kp("\u2193"),
+          kp("\u2192"),
+          kp("End"),
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          kp("\u23ee"),
+          kp("\u2318["),
+          T,
+          kp("\u2318]"),
+          kp("\u23ed"),
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+        ],
+        /* L3 Symbols */
+        [
+          kp("!"),
+          kp("@"),
+          kp("#"),
+          kp("$"),
+          kp("%"),
+          kp("^"),
+          kp("&"),
+          kp("*"),
+          kp("("),
+          kp(")"),
+          kp("~"),
+          kp("|"),
+          kp("{"),
+          kp("}"),
+          kp("+"),
+          T,
+          T,
+          kp("_"),
+          kp("="),
+          kp("["),
+          kp("]"),
+          kp("\\"),
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          kp(";"),
+          kp("'"),
+          kp("`"),
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+        ],
+        /* L4 Mouse */
+        [
+          t0("Q"),
+          t0("W"),
+          t0("E"),
+          t0("R"),
+          t0("T"),
+          t0("Y"),
+          t0("U"),
+          t0("I"),
+          t0("O"),
+          t0("P"),
+          t0("A"),
+          t0("S"),
+          t0("D"),
+          t0("F"),
+          t0("G"),
+          mk("Click"),
+          T,
+          t0("H"),
+          t0("J"),
+          mk("Click"),
+          mk("RClick"),
+          t0("\u232b"),
+          t0("Z"),
+          t0("X"),
+          t0("C"),
+          t0("V"),
+          t0("B"),
+          mk("RClick"),
+          T,
+          t0("N"),
+          t0("M"),
+          t0(","),
+          t0("."),
+          t0("/"),
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+        ],
+        /* L5 Function */
+        [
+          kp("F1"),
+          kp("F2"),
+          kp("F3"),
+          kp("F4"),
+          kp("F5"),
+          T,
+          T,
+          T,
+          T,
+          T,
+          kp("F6"),
+          kp("F7"),
+          kp("F8"),
+          kp("F9"),
+          kp("F10"),
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          kp("F11"),
+          kp("F12"),
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+        ],
+        /* L6 Bluetooth */
+        [
+          bt("BT1"),
+          bt("BT2"),
+          bt("BT3"),
+          bt("BT4"),
+          bt("CLR All"),
+          T,
+          T,
+          T,
+          T,
+          T,
+          bt("CLR"),
+          bt("DC1"),
+          bt("DC2"),
+          bt("DC3"),
+          bt("DC4"),
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          BT,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          BT,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+        ],
+        /* L7 Scroll */
+        [
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
+        ],
+      ];
+
+      /* ── Transparent key resolution ── */
+      /* ZMK layer stack: all layers activate from L0, so &trans → L0 */
+      function resolve(li, ki) {
+        const k = LAYERS[li][ki];
+        if (k.t !== "trans") return k;
+        const base = LAYERS[0][ki];
+        if (base.t !== "trans") return Object.assign({}, base, { _from: 0 });
+        return k;
+      }
+
+      /* ── State ── */
+      let activeLayer = 0;
+
+      /* ── Render ── */
+      function render(li) {
+        activeLayer = li;
+        const kb = document.getElementById("kb");
+        kb.innerHTML = "";
+        document.documentElement.style.setProperty("--lc", META[li].color);
+
+        /* Tabs */
+        document.querySelectorAll(".tab").forEach((t, i) => {
+          t.classList.toggle("active", i === li);
+          t.style.setProperty("--lc", META[i].color);
+        });
+
+        /* Keys */
+        for (let i = 0; i < 43; i++) {
+          const raw = LAYERS[li][i];
+          const isTrans = raw.t === "trans";
+          const k = isTrans ? resolve(li, i) : raw;
+          const el = document.createElement("div");
+          el.className = "key";
+          el.dataset.idx = i;
+          el.style.left = POS[i][0] + 4 + "px";
+          el.style.top = POS[i][1] + 4 + "px";
+
+          if (isTrans) {
+            el.classList.add("tr");
+            renderKeyContent(el, k);
+            if (k._from !== undefined) {
+              const badge = document.createElement("span");
+              badge.className = "src";
+              badge.textContent = "L" + k._from;
+              el.appendChild(badge);
+            }
+          } else {
+            renderKeyContent(el, k);
+          }
+
+          /* Tooltip */
+          el.title = buildTooltip(k, isTrans, i);
+          kb.appendChild(el);
+        }
+
+        /* Encoder */
+        const enc = document.createElement("div");
+        enc.className = "enc";
+        enc.innerHTML =
+          '<span class="enc-title">ENCODER</span>' +
+          '<span class="enc-row"><span class="ccw">\u21b6 ' +
+          ENC[li].ccw +
+          "</span>" +
+          '<span class="cw">' +
+          ENC[li].cw +
+          " \u21b7</span></span>";
+        kb.appendChild(enc);
+
+        rescale();
+      }
+
+      function renderKeyContent(el, k) {
+        switch (k.t) {
+          case "kp":
+            el.innerHTML = '<span class="tap">' + esc(k.l) + "</span>";
+            break;
+          case "lt":
+          case "mt":
+            el.classList.add("ht");
+            el.innerHTML =
+              '<span class="tap">' +
+              esc(k.tap) +
+              "</span>" +
+              '<span class="sep"></span>' +
+              '<span class="hold">' +
+              esc(k.hold) +
+              "</span>";
+            break;
+          case "mo":
+            el.classList.add("mo");
+            el.innerHTML =
+              '<span class="mo-sub">Hold</span>' +
+              '<span class="mo-name">' +
+              esc(k.hold) +
+              "</span>";
+            break;
+          case "to0":
+            el.classList.add("to0");
+            el.innerHTML =
+              '<span class="tap">' +
+              esc(k.l) +
+              "</span>" +
+              '<span class="badge">\u2192L0</span>';
+            break;
+          case "mk":
+            el.classList.add("mk");
+            el.innerHTML = '<span class="tap">' + esc(k.l) + "</span>";
+            break;
+          case "bt":
+            el.classList.add("bt");
+            el.innerHTML = '<span class="tap">' + esc(k.l) + "</span>";
+            break;
+          case "boot":
+            el.classList.add("boot");
+            el.innerHTML = '<span class="tap">Boot</span>';
+            break;
+          default:
+            el.innerHTML = '<span class="tap">?</span>';
+        }
+      }
+
+      function buildTooltip(k, isTrans, idx) {
+        const pos = "Key #" + idx;
+        let desc = "";
+        switch (k.t) {
+          case "kp":
+            desc = "Tap: " + k.l;
+            break;
+          case "lt":
+            desc =
+              "Tap: " + k.tap + " / Hold: " + k.hold + " (Layer " + k.hl + ")";
+            break;
+          case "mt":
+            desc = "Tap: " + k.tap + " / Hold: " + k.hold;
+            break;
+          case "mo":
+            desc = "Hold: " + k.hold + " (Layer " + k.hl + ")";
+            break;
+          case "to0":
+            desc = "Tap: " + k.l + " + return to Layer 0";
+            break;
+          case "mk":
+            desc = "Mouse: " + k.l;
+            break;
+          case "bt":
+            desc = "Bluetooth: " + k.l;
+            break;
+          case "boot":
+            desc = "Bootloader (flash mode)";
+            break;
+        }
+        if (isTrans && k._from !== undefined)
+          desc += " [from L" + k._from + "]";
+        return pos + "\n" + desc;
+      }
+
+      function esc(s) {
+        return s
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      /* ── Tabs ── */
+      (function initTabs() {
+        const container = document.getElementById("tabs");
+        META.forEach((m, i) => {
+          const t = document.createElement("div");
+          t.className = "tab";
+          t.style.setProperty("--lc", m.color);
+          t.innerHTML =
+            '<span class="num">' +
+            i +
+            "</span>" +
+            m.name +
+            '<span class="act">' +
+            m.act +
+            "</span>";
+          t.addEventListener("click", () => render(i));
+          container.appendChild(t);
+        });
+      })();
+
+      /* ── event.code → physical position map ── */
+      const CODE_MAP = {
+        // Row 0: Q W E R T | Y U I O P
+        KeyQ: [0],
+        KeyW: [1],
+        KeyE: [2],
+        KeyR: [3],
+        KeyT: [4],
+        KeyY: [5],
+        KeyU: [6],
+        KeyI: [7],
+        KeyO: [8],
+        KeyP: [9],
+        // Row 1: A S D F G | (thumb×2) | H J K L ⌫
+        KeyA: [10],
+        KeyS: [11],
+        KeyD: [12],
+        KeyF: [13],
+        KeyG: [14],
+        KeyH: [17],
+        KeyJ: [18],
+        KeyK: [19],
+        KeyL: [20],
+        Backspace: [21],
+        // Row 2: Z X C V B | (thumb×2) | N M , . /
+        KeyZ: [22],
+        KeyX: [23],
+        KeyC: [24],
+        KeyV: [25],
+        KeyB: [26],
+        Minus: [28],
+        KeyN: [29],
+        KeyM: [30],
+        Comma: [31],
+        Period: [32],
+        Slash: [33],
+        // Row 3: Cmd Alt Ctrl Tab かな | Enter Space 英 Esc
+        MetaLeft: [34],
+        MetaRight: [34],
+        AltLeft: [35],
+        AltRight: [35],
+        ControlLeft: [36],
+        ControlRight: [36],
+        Tab: [37],
+        Enter: [39],
+        Space: [40],
+        Escape: [16, 42],
+        // 特殊: Lang1/Lang2
+        Lang1: [41],
+        Lang2: [38],
+      };
+
+      /* ── event.key label matching (fallback) ── */
+      function findPositionsByLabel(key) {
+        const layer = LAYERS[activeLayer];
+        const positions = [];
+        for (let i = 0; i < layer.length; i++) {
+          const k = layer[i].t === "trans" ? resolve(activeLayer, i) : layer[i];
+          const label = k.l || k.tap || "";
+          if (label === key || label.toLowerCase() === key.toLowerCase()) {
+            positions.push(i);
+          }
+        }
+        return positions;
+      }
+
+      /* ── Capture mode state ── */
+      let captureMode = false;
+      const captureBtn = document.getElementById("capture-btn");
+      const captureIndicator = document.getElementById("capture-indicator");
+      const historyPanel = document.getElementById("history-panel");
+      const historyScroll = document.getElementById("history-scroll");
+      const historyClear = document.getElementById("history-clear");
+      const keyHistory = [];
+      const MAX_HISTORY = 20;
+
+      function toggleCapture() {
+        captureMode = !captureMode;
+        captureBtn.textContent = "Capture: " + (captureMode ? "ON" : "OFF");
+        captureBtn.classList.toggle("active", captureMode);
+        captureIndicator.classList.toggle("visible", captureMode);
+        historyPanel.classList.toggle("visible", captureMode);
+        if (!captureMode) {
+          document.querySelectorAll(".key.pressed").forEach((el) => {
+            el.classList.remove("pressed");
+          });
+        }
+      }
+
+      captureBtn.addEventListener("click", toggleCapture);
+
+      historyClear.addEventListener("click", () => {
+        keyHistory.length = 0;
+        historyScroll.innerHTML = "";
+      });
+
+      function highlightPositions(positions, add) {
+        const kb = document.getElementById("kb");
+        positions.forEach((pos) => {
+          const el = kb.querySelector('.key[data-idx="' + pos + '"]');
+          if (el) {
+            if (add) {
+              el.classList.add("pressed");
+            } else {
+              el.classList.remove("pressed");
+            }
+          }
+        });
+      }
+
+      function addToHistory(label) {
+        const now = new Date();
+        const time = now.toLocaleTimeString("ja-JP", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+        keyHistory.unshift({ label, time });
+        if (keyHistory.length > MAX_HISTORY) keyHistory.pop();
+        renderHistory();
+      }
+
+      function renderHistory() {
+        historyScroll.innerHTML = "";
+        keyHistory.forEach((entry) => {
+          const badge = document.createElement("div");
+          badge.className = "history-badge";
+          badge.innerHTML =
+            "<span>" +
+            esc(entry.label) +
+            "</span>" +
+            '<span class="badge-time">' +
+            entry.time +
+            "</span>";
+          historyScroll.appendChild(badge);
+        });
+      }
+
+      /* Map from code to positions, tracking per-code for keyup */
+      const activeKeys = new Map();
+
+      /* ── Unified keydown/keyup handler ── */
+      document.addEventListener("keydown", (e) => {
+        /* Ctrl+K: toggle capture regardless of mode */
+        if (e.ctrlKey && e.key === "k") {
+          e.preventDefault();
+          toggleCapture();
+          return;
+        }
+
+        if (captureMode) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          /* Find positions */
+          let positions = CODE_MAP[e.code] || [];
+          let label = e.key;
+
+          /* Fallback: match by label on current layer */
+          if (positions.length === 0) {
+            positions = findPositionsByLabel(e.key);
+          }
+
+          /* Determine display label from layer data */
+          if (positions.length > 0) {
+            const k = LAYERS[activeLayer][positions[0]];
+            const resolved =
+              k.t === "trans" ? resolve(activeLayer, positions[0]) : k;
+            label = resolved.l || resolved.tap || e.key;
+          }
+
+          /* Highlight */
+          if (positions.length > 0 && !activeKeys.has(e.code)) {
+            activeKeys.set(e.code, positions);
+            highlightPositions(positions, true);
+            addToHistory(label);
+          }
+        } else {
+          /* Original layer switching shortcuts */
+          if (e.key >= "1" && e.key <= "8") {
+            render(parseInt(e.key) - 1);
+          } else if (e.key === "ArrowLeft") {
+            render((activeLayer - 1 + 8) % 8);
+          } else if (e.key === "ArrowRight") {
+            render((activeLayer + 1) % 8);
+          }
+        }
+      });
+
+      document.addEventListener("keyup", (e) => {
+        if (!captureMode) return;
+        e.preventDefault();
+        const positions = activeKeys.get(e.code);
+        if (positions) {
+          highlightPositions(positions, false);
+          activeKeys.delete(e.code);
+        }
+      });
+
+      /* ── Responsive scaling ── */
+      function rescale() {
+        const wrap = document.getElementById("kb-wrap");
+        const kb = document.getElementById("kb");
+        const maxW = Math.min(window.innerWidth - 32, 1400);
+        const scale = Math.min(maxW / 1300, 1);
+        kb.style.transform = "scale(" + scale + ")";
+        wrap.style.width = 1300 * scale + "px";
+        wrap.style.height = 400 * scale + "px";
+      }
+      window.addEventListener("resize", rescale);
+
+      /* ── Initial render ── */
+      render(0);
+    </script>
+  </body>
+</html>
