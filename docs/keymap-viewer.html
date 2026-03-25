@@ -1219,7 +1219,9 @@
           info.positions.forEach((pos) => {
             const el = kb.querySelector('.key[data-idx="' + pos + '"]');
             if (el) {
-              el.classList.add(info.isLayerKey ? "layer-hold" : "pressed");
+              const cls =
+                info.isLayerKey && info.holdFired ? "layer-hold" : "pressed";
+              el.classList.add(cls);
             }
           });
         });
@@ -1292,15 +1294,29 @@
             const isLayerKey = l0key.hl !== undefined;
 
             if (isLayerKey) {
-              layerStack.push({
-                code: e.code,
-                prevLayer: activeLayer,
-                targetLayer: l0key.hl,
+              /* Tap/hold discrimination: show pressed immediately,
+                 switch layer only after tapping-term (200ms) */
+              const holdTimer = setTimeout(() => {
+                const entry = activeKeys.get(e.code);
+                if (entry) {
+                  entry.holdFired = true;
+                  layerStack.push({
+                    code: e.code,
+                    prevLayer: activeLayer,
+                    targetLayer: l0key.hl,
+                  });
+                  render(l0key.hl);
+                  reapplyHighlights();
+                }
+              }, 200);
+              activeKeys.set(e.code, {
+                positions,
+                isLayerKey: true,
+                holdTimer,
+                holdFired: false,
               });
-              activeKeys.set(e.code, { positions, isLayerKey: true });
-              render(l0key.hl);
-              reapplyHighlights();
-              addToHistory(label + " \u2192L" + l0key.hl);
+              highlightPositions(positions, true);
+              addToHistory(label);
             } else {
               activeKeys.set(e.code, { positions, isLayerKey: false });
               highlightPositions(positions, true);
@@ -1325,17 +1341,23 @@
         const info = activeKeys.get(e.code);
         if (info) {
           if (info.isLayerKey) {
-            /* Remove from layerStack */
-            const idx = layerStack.findIndex((s) => s.code === e.code);
-            if (idx !== -1) layerStack.splice(idx, 1);
-            /* Restore layer: top of stack or baseLayer */
-            const targetLayer =
-              layerStack.length > 0
-                ? layerStack[layerStack.length - 1].targetLayer
-                : baseLayer;
-            activeKeys.delete(e.code);
-            render(targetLayer);
-            reapplyHighlights();
+            clearTimeout(info.holdTimer);
+            if (info.holdFired) {
+              /* Was held: restore layer */
+              const idx = layerStack.findIndex((s) => s.code === e.code);
+              if (idx !== -1) layerStack.splice(idx, 1);
+              const targetLayer =
+                layerStack.length > 0
+                  ? layerStack[layerStack.length - 1].targetLayer
+                  : baseLayer;
+              activeKeys.delete(e.code);
+              render(targetLayer);
+              reapplyHighlights();
+            } else {
+              /* Was tapped: just remove pressed highlight */
+              highlightPositions(info.positions, false);
+              activeKeys.delete(e.code);
+            }
           } else {
             highlightPositions(info.positions, false);
             activeKeys.delete(e.code);
