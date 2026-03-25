@@ -316,6 +316,12 @@
           box-shadow 0.05s,
           transform 0.05s;
       }
+      .key.layer-hold {
+        border-color: var(--lc) !important;
+        box-shadow: 0 0 16px color-mix(in srgb, var(--lc) 50%, transparent) !important;
+        transform: scale(1.06);
+        z-index: 20 !important;
+      }
 
       /* ── Key history panel ── */
       .history-panel {
@@ -913,6 +919,8 @@
 
       /* ── State ── */
       let activeLayer = 0;
+      let baseLayer = 0;
+      const layerStack = []; // [{code, prevLayer, targetLayer}]
 
       /* ── Render ── */
       function render(li) {
@@ -1079,7 +1087,11 @@
             '<span class="act">' +
             m.act +
             "</span>";
-          t.addEventListener("click", () => render(i));
+          t.addEventListener("click", () => {
+            baseLayer = i;
+            layerStack.length = 0;
+            render(i);
+          });
           container.appendChild(t);
         });
       })();
@@ -1166,10 +1178,17 @@
         captureBtn.classList.toggle("active", captureMode);
         captureIndicator.classList.toggle("visible", captureMode);
         historyPanel.classList.toggle("visible", captureMode);
-        if (!captureMode) {
-          document.querySelectorAll(".key.pressed").forEach((el) => {
-            el.classList.remove("pressed");
-          });
+        if (captureMode) {
+          baseLayer = activeLayer;
+        } else {
+          document
+            .querySelectorAll(".key.pressed, .key.layer-hold")
+            .forEach((el) => {
+              el.classList.remove("pressed", "layer-hold");
+            });
+          activeKeys.clear();
+          layerStack.length = 0;
+          render(baseLayer);
         }
       }
 
@@ -1191,6 +1210,18 @@
               el.classList.remove("pressed");
             }
           }
+        });
+      }
+
+      function reapplyHighlights() {
+        const kb = document.getElementById("kb");
+        activeKeys.forEach((info) => {
+          info.positions.forEach((pos) => {
+            const el = kb.querySelector('.key[data-idx="' + pos + '"]');
+            if (el) {
+              el.classList.add(info.isLayerKey ? "layer-hold" : "pressed");
+            }
+          });
         });
       }
 
@@ -1255,11 +1286,26 @@
             label = resolved.l || resolved.tap || e.key;
           }
 
-          /* Highlight */
+          /* Check L0 key data for layer-switch capability */
           if (positions.length > 0 && !activeKeys.has(e.code)) {
-            activeKeys.set(e.code, positions);
-            highlightPositions(positions, true);
-            addToHistory(label);
+            const l0key = LAYERS[0][positions[0]];
+            const isLayerKey = l0key.hl !== undefined;
+
+            if (isLayerKey) {
+              layerStack.push({
+                code: e.code,
+                prevLayer: activeLayer,
+                targetLayer: l0key.hl,
+              });
+              activeKeys.set(e.code, { positions, isLayerKey: true });
+              render(l0key.hl);
+              reapplyHighlights();
+              addToHistory(label + " \u2192L" + l0key.hl);
+            } else {
+              activeKeys.set(e.code, { positions, isLayerKey: false });
+              highlightPositions(positions, true);
+              addToHistory(label);
+            }
           }
         } else {
           /* Original layer switching shortcuts */
@@ -1276,10 +1322,24 @@
       document.addEventListener("keyup", (e) => {
         if (!captureMode) return;
         e.preventDefault();
-        const positions = activeKeys.get(e.code);
-        if (positions) {
-          highlightPositions(positions, false);
-          activeKeys.delete(e.code);
+        const info = activeKeys.get(e.code);
+        if (info) {
+          if (info.isLayerKey) {
+            /* Remove from layerStack */
+            const idx = layerStack.findIndex((s) => s.code === e.code);
+            if (idx !== -1) layerStack.splice(idx, 1);
+            /* Restore layer: top of stack or baseLayer */
+            const targetLayer =
+              layerStack.length > 0
+                ? layerStack[layerStack.length - 1].targetLayer
+                : baseLayer;
+            activeKeys.delete(e.code);
+            render(targetLayer);
+            reapplyHighlights();
+          } else {
+            highlightPositions(info.positions, false);
+            activeKeys.delete(e.code);
+          }
         }
       });
 
