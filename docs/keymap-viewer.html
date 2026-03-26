@@ -517,14 +517,14 @@
 
       /* ── Encoder bindings per layer ── */
       const ENC = [
-        { ccw: "C-S-Tab", cw: "C-Tab" },
-        { ccw: "C-S-Tab", cw: "C-Tab" },
-        { ccw: "C-S-Tab", cw: "C-Tab" },
-        { ccw: "Cmd-", cw: "Cmd+" },
-        { ccw: "—", cw: "—" },
-        { ccw: "Vol-", cw: "Vol+" },
-        { ccw: "Undo", cw: "Redo" },
-        { ccw: "—", cw: "—" },
+        { push: "Cmd+N", ccw: "C-S-Tab", cw: "C-Tab" },
+        { push: "Cmd+N", ccw: "C-S-Tab", cw: "C-Tab" },
+        { push: "Cmd+N", ccw: "C-S-Tab", cw: "C-Tab" },
+        { push: "Cmd+0", ccw: "Cmd-", cw: "Cmd+" },
+        { push: "\u2014", ccw: "\u2014", cw: "\u2014" },
+        { push: "Mute", ccw: "Vol-", cw: "Vol+" },
+        { push: "Save", ccw: "Undo", cw: "Redo" },
+        { push: "\u2014", ccw: "\u2014", cw: "\u2014" },
       ];
 
       /* ── Key helpers ── */
@@ -543,7 +543,7 @@
       const LAYERS = [
         /* L0 Default */
         [
-          kp("Q"),
+          kp("Cmd+N"),
           kp("W"),
           kp("E"),
           kp("R"),
@@ -589,7 +589,7 @@
         ],
         /* L1 Numbers */
         [
-          N,
+          kp("Cmd+N"),
           N,
           N,
           N,
@@ -635,7 +635,7 @@
         ],
         /* L2 Navigation */
         [
-          N,
+          kp("Cmd+N"),
           N,
           N,
           N,
@@ -681,7 +681,7 @@
         ],
         /* L3 Symbols */
         [
-          N,
+          kp("Cmd+0"),
           N,
           N,
           N,
@@ -727,7 +727,7 @@
         ],
         /* L4 Mouse */
         [
-          t0("Q"),
+          N,
           t0("W"),
           t0("E"),
           t0("R"),
@@ -773,7 +773,7 @@
         ],
         /* L5 Function */
         [
-          N,
+          kp("Mute"),
           N,
           N,
           N,
@@ -819,7 +819,7 @@
         ],
         /* L6 Bluetooth */
         [
-          bt("BT1"),
+          kp("Save"),
           bt("BT2"),
           bt("BT3"),
           bt("BT4"),
@@ -978,7 +978,10 @@
           "</span>" +
           '<span class="cw">' +
           ENC[li].cw +
-          " \u21b7</span></span>";
+          " \u21b7</span></span>" +
+          '<span class="enc-row" style="margin-top:2px"><span style="font-size:11px;color:#7aa2f7">\u2193 ' +
+          ENC[li].push +
+          "</span></span>";
         kb.appendChild(enc);
 
         rescale();
