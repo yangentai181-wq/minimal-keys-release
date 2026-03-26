@@ -45,7 +45,7 @@
 &kp LSHIFT      &kp Z      &kp C      &kp V                    &kp B              &lt 2 LC(UP)          &lt BT SLASH               &kp N              &kp M      &kp COMMA  &kp DOT  &kp SLASH
 &kp LCMD        &kp LALT   &kp LCTRL  &lt FN TAB               &lt 3 LANGUAGE_2   &lt SCROLL SPACE      &mt RSHIFT ENTER           &lt 3 LANGUAGE_1                                   &kp ESC
             >;
-            sensor-bindings = <&inc_dec_kp C_VOLUME_DOWN C_VOLUME_UP>;
+            sensor-bindings = <&inc_dec_kp LC(LS(TAB)) LC(TAB)>;
         };
 
         // Layer 1: Numbers (Numpad right)
@@ -56,7 +56,7 @@
 &trans    &none    &none    &none    &none          &trans            &trans                         &kp N7   &kp N8  &kp N9  &kp ASTRK  &trans
 &trans    &trans   &trans   &trans   &trans         &trans            &trans                         &kp N0                               &trans
             >;
-            sensor-bindings = <&inc_dec_kp C_VOLUME_DOWN C_VOLUME_UP>;
+            sensor-bindings = <&inc_dec_kp LC(LS(TAB)) LC(TAB)>;
         };
 
         // Layer 2: Navigation (Arrows)
@@ -67,7 +67,7 @@
 &trans         &none         &none         &none          &none          &none             &trans                         &none          &none         &none      &none          &trans
 &trans         &trans        &trans        &trans         &trans         &trans            &trans                         &trans                                                 &trans
             >;
-            sensor-bindings = <&inc_dec_kp C_BRI_DN C_BRI_UP>;
+            sensor-bindings = <&inc_dec_kp LC(LS(TAB)) LC(TAB)>;
         };
 
         // Layer 3: Symbols
@@ -78,7 +78,7 @@
 &kp X          &none      &none      &none       &none          &none             &trans                   &none      &none      &kp COMMA  &kp DOT    &kp SLASH
 &trans         &trans     &trans     &trans      &trans         &trans            &trans                   &trans                                       &kp UNDER
             >;
-            sensor-bindings = <&inc_dec_kp C_VOLUME_DOWN C_VOLUME_UP>;
+            sensor-bindings = <&inc_dec_kp LG(MINUS) LG(EQUAL)>;
         };
 
         // Layer 4: Auto-Mouse (activated by trackball movement, character keys return to L0)
@@ -99,7 +99,7 @@
 &kp F7    &kp F8   &kp F9   &kp F10  &kp F11        &kp F12           &trans                       &none    &none   &none   &none   &none
 &trans    &trans   &trans   &trans   &trans         &trans            &trans                       &trans                           &none
             >;
-            sensor-bindings = <&inc_dec_kp C_BRI_DN C_BRI_UP>;
+            sensor-bindings = <&inc_dec_kp C_VOLUME_DOWN C_VOLUME_UP>;
         };
 
         // Layer 6: Bluetooth
@@ -110,7 +110,7 @@
 &bootloader    &trans         &trans         &trans         &trans         &trans            &trans                &trans  &trans  &trans  &trans  &bootloader
 &trans         &trans         &trans         &trans         &trans         &trans            &trans                &trans                          &trans
             >;
-            sensor-bindings = <&inc_dec_kp C_VOLUME_DOWN C_VOLUME_UP>;
+            sensor-bindings = <&inc_dec_kp LG(Z) LG(LS(Z))>;
         };
 
         // Layer 7: Scroll (trackball acts as scroll wheel while holding key)
