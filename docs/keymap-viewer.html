@@ -157,6 +157,9 @@
         border-color: #f7768e;
         color: #f7768e;
       }
+      .key.none {
+        opacity: 0.25;
+      }
       .key.mo .mo-sub {
         font-size: 10px;
         color: #7982a9;
@@ -503,13 +506,13 @@
       /* ── Layer metadata ── */
       const META = [
         { name: "Default", color: "#7aa2f7", act: "Base layer" },
-        { name: "Numbers", color: "#ff9e64", act: "Hold: \u2303\u2191" },
-        { name: "Navigation", color: "#9ece6a", act: "Hold: Nav" },
-        { name: "Symbols", color: "#bb9af7", act: "Hold: Enter/Space" },
+        { name: "Numbers", color: "#ff9e64", act: "Hold: Click" },
+        { name: "Navigation", color: "#9ece6a", act: "Hold: \u2303\u2191" },
+        { name: "Symbols", color: "#bb9af7", act: "Hold: \u304b\u306a/\u82f1" },
         { name: "Mouse", color: "#f7768e", act: "Trackball auto" },
-        { name: "Function", color: "#7dcfff", act: "Hold: Tab/Esc" },
-        { name: "Bluetooth", color: "#7381d8", act: "Hold: -" },
-        { name: "Scroll", color: "#9aa5ce", act: "Hold: \u82f1" },
+        { name: "Function", color: "#7dcfff", act: "Hold: Tab/\u2212" },
+        { name: "Bluetooth", color: "#7381d8", act: "Hold: /" },
+        { name: "Scroll", color: "#9aa5ce", act: "Hold: Space" },
       ];
 
       /* ── Encoder bindings per layer ── */
@@ -526,6 +529,7 @@
 
       /* ── Key helpers ── */
       const T = { t: "trans" };
+      const N = { t: "none" };
       const kp = (l) => ({ t: "kp", l });
       const lt = (tap, hold, hl) => ({ t: "lt", tap, hold, hl });
       const mt = (tap, hold) => ({ t: "mt", tap, hold });
@@ -554,117 +558,117 @@
           kp("D"),
           kp("F"),
           kp("G"),
-          lt("\u2303\u2191", "L1", 1),
-          lt("Esc", "FN", 5),
+          lt("Click", "L1", 1),
+          lt("\u2212", "FN", 5),
           kp("H"),
           kp("J"),
           kp("K"),
           kp("L"),
           kp("\u232b"),
-          mt("Z", "\u21e7"),
-          kp("X"),
+          kp("\u21e7"),
+          kp("Z"),
           kp("C"),
           kp("V"),
           kp("B"),
-          mo("Nav", 2),
-          lt("\u2212", "BT", 6),
+          lt("\u2303\u2191", "Nav", 2),
+          lt("/", "BT", 6),
           kp("N"),
           kp("M"),
           kp(","),
           kp("."),
-          mt("/", "\u21e7"),
+          kp("/"),
           kp("\u2318"),
           kp("\u2325"),
           kp("\u2303"),
           lt("Tab", "FN", 5),
-          lt("\u304b\u306a", "Scroll", 7),
-          lt("Enter", "L3", 3),
-          lt("Space", "L3", 3),
-          kp("\u82f1"),
+          lt("\u304b\u306a", "L3", 3),
+          lt("Space", "Scroll", 7),
+          mt("Enter", "\u21e7"),
+          lt("\u82f1", "L3", 3),
           kp("Esc"),
         ],
         /* L1 Numbers */
         [
-          T,
-          T,
-          T,
-          T,
-          T,
+          N,
+          N,
+          N,
+          N,
+          N,
           kp("1"),
           kp("2"),
           kp("3"),
-          T,
-          T,
-          T,
-          T,
-          T,
-          T,
-          T,
+          kp("+"),
+          N,
+          N,
+          N,
+          N,
+          N,
+          N,
           T,
           T,
           kp("4"),
           kp("5"),
           kp("6"),
-          kp("+"),
           kp("\u2212"),
           T,
           T,
-          T,
-          T,
-          T,
+          N,
+          N,
+          N,
+          N,
           T,
           T,
           kp("7"),
           kp("8"),
           kp("9"),
           kp("*"),
-          kp("/"),
           T,
           T,
           T,
           T,
           T,
           T,
-          kp("."),
+          T,
+          T,
           kp("0"),
           T,
         ],
         /* L2 Navigation */
         [
-          T,
-          T,
-          T,
-          T,
-          T,
-          kp("\u2303\u2191"),
-          kp("\u2303\u2190"),
+          N,
+          N,
+          N,
+          N,
+          N,
+          N,
+          N,
           kp("\u2191"),
-          kp("\u2303\u2192"),
-          kp("\u2303\u2193"),
+          N,
+          N,
+          N,
+          N,
+          N,
+          N,
+          N,
+          N,
           T,
-          T,
-          T,
-          T,
-          T,
-          T,
-          T,
-          kp("Home"),
+          kp("F2"),
           kp("\u2190"),
           kp("\u2193"),
           kp("\u2192"),
-          kp("End"),
           T,
           T,
+          N,
+          N,
+          N,
+          N,
+          N,
           T,
+          N,
+          N,
+          N,
+          N,
           T,
-          T,
-          T,
-          T,
-          kp("\u23ee"),
-          kp("\u2318["),
-          T,
-          kp("\u2318]"),
-          kp("\u23ed"),
           T,
           T,
           T,
@@ -677,49 +681,49 @@
         ],
         /* L3 Symbols */
         [
+          N,
+          N,
+          N,
+          N,
+          N,
+          kp("("),
+          kp(")"),
+          kp("="),
+          kp("~"),
+          kp("|"),
           kp("!"),
-          kp("@"),
+          kp('"'),
           kp("#"),
           kp("$"),
           kp("%"),
-          kp("^"),
           kp("&"),
-          kp("*"),
-          kp("("),
-          kp(")"),
-          kp("~"),
-          kp("|"),
-          kp("{"),
-          kp("}"),
-          kp("+"),
+          kp("@"),
+          kp("["),
+          kp("]"),
+          kp(";"),
+          kp(":"),
+          T,
+          kp("X"),
+          N,
+          N,
+          N,
+          N,
+          N,
+          T,
+          N,
+          N,
+          kp(","),
+          kp("."),
+          kp("/"),
+          T,
+          T,
+          T,
+          T,
+          T,
+          T,
           T,
           T,
           kp("_"),
-          kp("="),
-          kp("["),
-          kp("]"),
-          kp("\\"),
-          T,
-          T,
-          T,
-          T,
-          T,
-          T,
-          T,
-          T,
-          T,
-          kp(";"),
-          kp("'"),
-          kp("`"),
-          T,
-          T,
-          T,
-          T,
-          T,
-          T,
-          T,
-          T,
-          T,
         ],
         /* L4 Mouse */
         [
@@ -732,68 +736,77 @@
           t0("U"),
           t0("I"),
           t0("O"),
-          t0("P"),
+          kp("\u2303\u2191"),
           t0("A"),
           t0("S"),
           t0("D"),
           t0("F"),
-          t0("G"),
+          mk("Mid"),
           mk("Click"),
-          T,
+          t0("L0"),
           t0("H"),
           t0("J"),
           mk("Click"),
-          mk("RClick"),
-          t0("\u232b"),
+          mo("Scroll", 7),
+          T,
+          t0("L0"),
           t0("Z"),
-          t0("X"),
           t0("C"),
           t0("V"),
           t0("B"),
-          mk("RClick"),
-          T,
+          kp("\u2303\u2191"),
+          t0("L0"),
           t0("N"),
           t0("M"),
           t0(","),
           t0("."),
           t0("/"),
-          T,
-          T,
-          T,
-          T,
-          T,
-          T,
-          T,
-          T,
-          T,
+          t0("L0"),
+          t0("L0"),
+          t0("L0"),
+          t0("L0"),
+          t0("L0"),
+          mo("Scroll", 7),
+          t0("L0"),
+          t0("L0"),
+          t0("L0"),
         ],
         /* L5 Function */
         [
+          N,
+          N,
+          N,
+          N,
+          N,
+          N,
+          N,
+          N,
+          N,
+          N,
           kp("F1"),
           kp("F2"),
           kp("F3"),
           kp("F4"),
           kp("F5"),
-          T,
-          T,
-          T,
-          T,
-          T,
           kp("F6"),
+          T,
+          N,
+          N,
+          N,
+          N,
+          N,
           kp("F7"),
           kp("F8"),
           kp("F9"),
           kp("F10"),
-          T,
-          T,
-          T,
-          T,
-          T,
-          T,
-          T,
           kp("F11"),
           kp("F12"),
           T,
+          N,
+          N,
+          N,
+          N,
+          N,
           T,
           T,
           T,
@@ -802,16 +815,7 @@
           T,
           T,
           T,
-          T,
-          T,
-          T,
-          T,
-          T,
-          T,
-          T,
-          T,
-          T,
-          T,
+          N,
         ],
         /* L6 Bluetooth */
         [
@@ -1025,6 +1029,10 @@
             el.classList.add("boot");
             el.innerHTML = '<span class="tap">Boot</span>';
             break;
+          case "none":
+            el.classList.add("none");
+            el.innerHTML = "";
+            break;
           default:
             el.innerHTML = '<span class="tap">?</span>';
         }
@@ -1058,6 +1066,9 @@
             break;
           case "boot":
             desc = "Bootloader (flash mode)";
+            break;
+          case "none":
+            desc = "No binding";
             break;
         }
         if (isTrans && k._from !== undefined)
@@ -1314,11 +1325,16 @@
                 isLayerKey: true,
                 holdTimer,
                 holdFired: false,
+                pressedAt: Date.now(),
               });
               highlightPositions(positions, true);
               addToHistory(label);
             } else {
-              activeKeys.set(e.code, { positions, isLayerKey: false });
+              activeKeys.set(e.code, {
+                positions,
+                isLayerKey: false,
+                pressedAt: Date.now(),
+              });
               highlightPositions(positions, true);
               addToHistory(label);
             }
@@ -1340,27 +1356,31 @@
         e.preventDefault();
         const info = activeKeys.get(e.code);
         if (info) {
-          if (info.isLayerKey) {
-            clearTimeout(info.holdTimer);
-            if (info.holdFired) {
-              /* Was held: restore layer */
-              const idx = layerStack.findIndex((s) => s.code === e.code);
-              if (idx !== -1) layerStack.splice(idx, 1);
-              const targetLayer =
-                layerStack.length > 0
-                  ? layerStack[layerStack.length - 1].targetLayer
-                  : baseLayer;
-              activeKeys.delete(e.code);
-              render(targetLayer);
-              reapplyHighlights();
-            } else {
-              /* Was tapped: just remove pressed highlight */
-              highlightPositions(info.positions, false);
-              activeKeys.delete(e.code);
-            }
-          } else {
-            highlightPositions(info.positions, false);
+          const MIN_PRESS_DISPLAY = 150; /* ms — minimum visible duration */
+          if (info.isLayerKey) clearTimeout(info.holdTimer);
+
+          if (info.isLayerKey && info.holdFired) {
+            /* Was held: restore layer immediately */
+            const idx = layerStack.findIndex((s) => s.code === e.code);
+            if (idx !== -1) layerStack.splice(idx, 1);
+            const targetLayer =
+              layerStack.length > 0
+                ? layerStack[layerStack.length - 1].targetLayer
+                : baseLayer;
             activeKeys.delete(e.code);
+            render(targetLayer);
+            reapplyHighlights();
+          } else {
+            /* Tap (layer key or regular): ensure minimum display time */
+            activeKeys.delete(e.code);
+            const elapsed = Date.now() - info.pressedAt;
+            const remaining = Math.max(0, MIN_PRESS_DISPLAY - elapsed);
+            const remove = () => highlightPositions(info.positions, false);
+            if (remaining > 0) {
+              setTimeout(remove, remaining);
+            } else {
+              remove();
+            }
           }
         }
       });
