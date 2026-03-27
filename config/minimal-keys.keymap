@@ -40,9 +40,9 @@
         // Layer 0: Default (US QWERTY)
         default_layer {
             bindings = <
-&kp LG(N)       &kp W      &kp E      &kp R                    &kp T                                                              &kp Y              &kp U      &kp I      &kp O    &kp P
+&kp Q            &kp W      &kp E      &kp R                    &kp T                                                              &kp Y              &kp U      &kp I      &kp O    &kp P
 &kp A           &kp S      &kp D      &kp F                    &kp G              &lt_mkp 1 MB1         &lt FN MINUS               &kp H              &kp J      &kp K      &kp L    &kp BACKSPACE
-&kp LSHIFT      &kp Z      &kp C      &kp V                    &kp B              &lt 2 LC(UP)          &lt BT SLASH               &kp N              &kp M      &kp COMMA  &kp DOT  &kp SLASH
+&kp LSHIFT      &kp Z      &kp C      &kp V                    &kp B              &lt 2 LC(UP)          &lt BT SLASH               &kp N              &kp M      &kp COMMA  &kp DOT  &kp X
 &kp LCMD        &kp LALT   &kp LCTRL  &lt FN TAB               &lt 3 LANGUAGE_2   &lt SCROLL SPACE      &mt RSHIFT ENTER           &lt 3 LANGUAGE_1                                   &kp ESC
             >;
             sensor-bindings = <&inc_dec_kp LC(LS(TAB)) LC(TAB)>;
@@ -62,7 +62,7 @@
         // Layer 2: Navigation (Arrows)
         arrow_layer {
             bindings = <
-&kp LG(N)      &none         &none         &none          &none                                                          &none          &none         &kp UP     &none          &none
+&kp LG(N)      &kp HOME      &kp PG_UP     &kp PG_DN      &kp END                                                        &none          &none         &kp UP     &none          &none
 &none          &none         &none         &none          &none          &none             &trans                         &kp F2         &kp LEFT      &kp DOWN   &kp RIGHT      &trans
 &trans         &none         &none         &none          &none          &none             &trans                         &none          &none         &none      &none          &trans
 &trans         &trans        &trans        &trans         &trans         &trans            &trans                         &trans                                                 &trans
@@ -73,9 +73,9 @@
         // Layer 3: Symbols
         symbol_layer {
             bindings = <
-&kp LG(N0)     &none      &none      &none       &none                                                      &kp LPAR   &kp RPAR   &kp EQUAL  &kp TILDE  &kp PIPE
+&kp LG(N0)     &kp SQT    &kp GRAVE  &kp LT      &kp GT                                                     &kp LPAR   &kp RPAR   &kp EQUAL  &kp TILDE  &kp PIPE
 &kp EXCL       &kp DQT    &kp HASH   &kp DOLLAR  &kp PERCENT    &kp AMPS          &kp AT                   &kp LBKT   &kp RBKT   &kp SEMI   &kp COLON  &trans
-&kp X          &none      &none      &none       &none          &none             &trans                   &none      &none      &kp COMMA  &kp DOT    &kp SLASH
+&kp BSLH       &kp QMARK  &kp CARET  &none       &none          &none             &trans                   &kp LBRC   &kp RBRC   &kp COMMA  &kp DOT    &kp SLASH
 &trans         &trans     &trans     &trans      &trans         &trans            &trans                   &trans                                       &kp UNDER
             >;
             sensor-bindings = <&inc_dec_kp LG(MINUS) LG(EQUAL)>;
@@ -84,9 +84,9 @@
         // Layer 4: Auto-Mouse (activated by trackball movement, character keys return to L0)
         MOUSE {
             bindings = <
-&none                &to_layer_0 W  &to_layer_0 E  &to_layer_0 R  &to_layer_0 T                                                &to_layer_0 Y  &to_layer_0 U  &to_layer_0 I      &to_layer_0 O    &kp LC(UP)
+&to_layer_0 Q        &to_layer_0 W  &to_layer_0 E  &to_layer_0 R  &to_layer_0 T                                                &to_layer_0 Y  &to_layer_0 U  &to_layer_0 I      &to_layer_0 O    &kp LC(UP)
 &to_layer_0 A       &to_layer_0 S  &to_layer_0 D  &to_layer_0 F  &mkp MB3       &mkp MB1          &to 0                        &to_layer_0 H  &to_layer_0 J  &mkp MB1           &mo SCROLL       &trans
-&to 0               &to_layer_0 Z  &to_layer_0 C  &to_layer_0 V  &to_layer_0 B  &kp LC(UP)        &to 0                        &to_layer_0 N  &to_layer_0 M  &to_layer_0 COMMA  &to_layer_0 DOT  &to_layer_0 SLASH
+&to 0               &to_layer_0 Z  &to_layer_0 C  &to_layer_0 V  &to_layer_0 B  &kp LC(UP)        &to 0                        &to_layer_0 N  &to_layer_0 M  &to_layer_0 COMMA  &to_layer_0 DOT  &to_layer_0 X
 &to 0               &to 0          &to 0          &to 0          &to 0          &mo SCROLL        &to 0                        &to 0                                                              &to 0
             >;
         };
@@ -94,7 +94,7 @@
         // Layer 5: Function keys (F1-F12 on left hand)
         fn_layer {
             bindings = <
-&kp C_MUTE  &none    &none    &none    &none                                                          &none    &none   &none   &none   &none
+&kp C_MUTE  &none    &none    &none    &none                                                          &kp C_PREV  &kp C_PLAY_PAUSE  &kp C_NEXT  &none   &none
 &kp F1    &kp F2   &kp F3   &kp F4   &kp F5         &kp F6            &trans                       &none    &none   &none   &none   &none
 &kp F7    &kp F8   &kp F9   &kp F10  &kp F11        &kp F12           &trans                       &none    &none   &none   &none   &none
 &trans    &trans   &trans   &trans   &trans         &trans            &trans                       &trans                           &none
@@ -105,7 +105,7 @@
         // Layer 6: Bluetooth
         bt_layer {
             bindings = <
-&kp LG(S)      &bt BT_SEL 1   &bt BT_SEL 2   &bt BT_SEL 3  &bt BT_CLR_ALL                                         &trans  &trans  &trans  &trans  &trans
+&bt BT_SEL 0   &bt BT_SEL 1   &bt BT_SEL 2   &bt BT_SEL 3  &bt BT_CLR_ALL                                         &trans  &trans  &trans  &trans  &trans
 &bt BT_CLR     &bt BT_DISC 0  &bt BT_DISC 1  &bt BT_DISC 2  &bt BT_DISC 3  &trans            &trans                &trans  &trans  &trans  &trans  &trans
 &bootloader    &trans         &trans         &trans         &trans         &trans            &trans                &trans  &trans  &trans  &trans  &bootloader
 &trans         &trans         &trans         &trans         &trans         &trans            &trans                &trans                          &trans
