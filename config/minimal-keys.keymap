@@ -10,6 +10,13 @@
 
 &mt {
     flavor = "balanced";
+    tapping-term-ms = <300>;
+    quick-tap-ms = <0>;
+};
+
+&lt {
+    flavor = "balanced";
+    tapping-term-ms = <300>;
     quick-tap-ms = <0>;
 };
 
@@ -29,7 +36,7 @@
             label = "LT_MKP";
             #binding-cells = <2>;
             flavor = "balanced";
-            tapping-term-ms = <200>;
+            tapping-term-ms = <300>;
             bindings = <&mo>, <&mkp>;
         };
     };
