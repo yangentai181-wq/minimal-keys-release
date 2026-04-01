@@ -523,7 +523,7 @@
         { push: "Cmd+0", ccw: "Cmd-", cw: "Cmd+" },
         { push: "\u2014", ccw: "\u2014", cw: "\u2014" },
         { push: "Mute", ccw: "Vol-", cw: "Vol+" },
-        { push: "Save", ccw: "Undo", cw: "Redo" },
+        { push: "BT1", ccw: "Undo", cw: "Redo" },
         { push: "\u2014", ccw: "\u2014", cw: "\u2014" },
       ];
 
@@ -543,7 +543,7 @@
       const LAYERS = [
         /* L0 Default */
         [
-          kp("Cmd+N"),
+          kp("Q"),
           kp("W"),
           kp("E"),
           kp("R"),
@@ -576,7 +576,7 @@
           kp("M"),
           kp(","),
           kp("."),
-          kp("/"),
+          kp("X"),
           kp("\u2318"),
           kp("\u2325"),
           kp("\u2303"),
@@ -636,10 +636,10 @@
         /* L2 Navigation */
         [
           kp("Cmd+N"),
-          N,
-          N,
-          N,
-          N,
+          kp("Home"),
+          kp("PgUp"),
+          kp("PgDn"),
+          kp("End"),
           N,
           N,
           kp("\u2191"),
@@ -682,10 +682,10 @@
         /* L3 Symbols */
         [
           kp("Cmd+0"),
-          N,
-          N,
-          N,
-          N,
+          kp("'"),
+          kp("`"),
+          kp("<"),
+          kp(">"),
           kp("("),
           kp(")"),
           kp("="),
@@ -703,15 +703,15 @@
           kp(";"),
           kp(":"),
           T,
-          kp("X"),
-          N,
-          N,
+          kp("\\"),
+          kp("?"),
+          kp("^"),
           N,
           N,
           N,
           T,
-          N,
-          N,
+          kp("{"),
+          kp("}"),
           kp(","),
           kp("."),
           kp("/"),
@@ -727,7 +727,7 @@
         ],
         /* L4 Mouse */
         [
-          N,
+          t0("Q"),
           t0("W"),
           t0("E"),
           t0("R"),
@@ -760,7 +760,7 @@
           t0("M"),
           t0(","),
           t0("."),
-          t0("/"),
+          t0("X"),
           t0("L0"),
           t0("L0"),
           t0("L0"),
@@ -778,9 +778,9 @@
           N,
           N,
           N,
-          N,
-          N,
-          N,
+          kp("\u23ea"),
+          kp("\u23ef"),
+          kp("\u23e9"),
           N,
           N,
           kp("F1"),
@@ -819,7 +819,7 @@
         ],
         /* L6 Bluetooth */
         [
-          kp("Save"),
+          bt("BT1"),
           bt("BT2"),
           bt("BT3"),
           bt("BT4"),
