@@ -103,6 +103,6 @@ int wireless_config_settings_save(void)
     return 0;
 }
 
-SYS_INIT(wireless_config_settings_init, APPLICATION);
+SYS_INIT(wireless_config_settings_init, APPLICATION, 91);
 
 #endif /* CONFIG_WIRELESS_CONFIG_PERSIST_SETTINGS */
