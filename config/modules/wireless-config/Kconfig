@@ -1,0 +1,32 @@
+# Wireless Config Module for minimal-keys
+# Runtime configuration over BLE
+
+config WIRELESS_CONFIG
+    bool "Wireless Configuration Service"
+    default n
+    depends on BT
+    help
+      Enable wireless runtime configuration service for minimal-keys keyboard.
+      Allows modifying combos, hold-tap timing, and trackball settings over BLE.
+
+if WIRELESS_CONFIG
+
+config WIRELESS_CONFIG_LOG_LEVEL
+    int "Wireless Config log level"
+    default 3
+    range 0 4
+
+config WIRELESS_CONFIG_NOTIFY_KEY_EVENTS
+    bool "Notify key press events over BLE"
+    default y
+    help
+      Send key press/release events to connected clients for real-time monitoring.
+
+config WIRELESS_CONFIG_PERSIST_SETTINGS
+    bool "Persist settings to flash"
+    default y
+    depends on SETTINGS
+    help
+      Save configuration changes to flash storage for persistence across reboots.
+
+endif # WIRELESS_CONFIG
