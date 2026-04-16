@@ -112,22 +112,23 @@ static ssize_t write_config(struct bt_conn *conn, const struct bt_gatt_attr *att
 }
 
 /* GATT Service Definition */
+/* Note: Using non-encrypted permissions for development. Enable encryption for production. */
 BT_GATT_SERVICE_DEFINE(wireless_config_svc,
     BT_GATT_PRIMARY_SERVICE(BT_UUID_DECLARE_128(WC_BT_SERVICE_UUID)),
 
     /* Config characteristic (Read/Write/Indicate) */
     BT_GATT_CHARACTERISTIC(BT_UUID_DECLARE_128(WC_BT_CONFIG_CHRC_UUID),
                            BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE | BT_GATT_CHRC_INDICATE,
-                           BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT,
+                           BT_GATT_PERM_READ | BT_GATT_PERM_WRITE,
                            read_config, write_config, NULL),
-    BT_GATT_CCC(config_ccc_changed, BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT),
+    BT_GATT_CCC(config_ccc_changed, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
 
     /* Event characteristic (Notify only) */
     BT_GATT_CHARACTERISTIC(BT_UUID_DECLARE_128(WC_BT_EVENT_CHRC_UUID),
                            BT_GATT_CHRC_NOTIFY,
                            BT_GATT_PERM_NONE,
                            NULL, NULL, NULL),
-    BT_GATT_CCC(event_ccc_changed, BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT),
+    BT_GATT_CCC(event_ccc_changed, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
 );
 
 /* Frame and send data */
