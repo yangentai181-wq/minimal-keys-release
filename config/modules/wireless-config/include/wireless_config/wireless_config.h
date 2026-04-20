@@ -44,16 +44,16 @@ enum wireless_config_status {
     WC_STATUS_INVALID_PARAM = 0x03,
 };
 
-/* Hold-tap configuration */
-struct wc_holdtap_config {
+/* Hold-tap configuration (7 bytes, packed for BLE transfer) */
+struct __attribute__((packed)) wc_holdtap_config {
     uint16_t tapping_term_ms;
     uint16_t quick_tap_ms;
     uint16_t require_prior_idle_ms;
     uint8_t flavor;  /* 0=hold-preferred, 1=balanced, 2=tap-preferred */
 };
 
-/* Trackball configuration */
-struct wc_trackball_config {
+/* Trackball configuration (10 bytes, packed for BLE transfer) */
+struct __attribute__((packed)) wc_trackball_config {
     uint16_t cpi;
     uint8_t x_scale;
     uint8_t y_scale;
@@ -70,14 +70,14 @@ struct wc_trackball_config {
 #define WC_MAX_COMBOS   16
 #define WC_MAX_COMBO_KEYS 4
 
-/* Layer keymap (single layer) */
-struct wc_layer_keymap {
+/* Layer keymap (single layer, 87 bytes packed for BLE transfer) */
+struct __attribute__((packed)) wc_layer_keymap {
     uint8_t layer_index;
     uint16_t keycodes[WC_NUM_KEYS];
 };
 
-/* Combo configuration */
-struct wc_combo_config {
+/* Combo configuration (14 bytes, packed for BLE transfer) */
+struct __attribute__((packed)) wc_combo_config {
     uint8_t id;              /* Combo slot index (0-15) */
     bool enabled;
     uint8_t keys[WC_MAX_COMBO_KEYS]; /* Key positions */
@@ -88,16 +88,16 @@ struct wc_combo_config {
     uint8_t layer_mask;      /* Bitmask of active layers (0xFF = all) */
 };
 
-/* Auto-mouse configuration */
-struct wc_automouse_config {
+/* Auto-mouse configuration (5 bytes, packed for BLE transfer) */
+struct __attribute__((packed)) wc_automouse_config {
     bool enabled;
     uint8_t target_layer;    /* Layer to activate on trackball movement */
     uint16_t timeout_ms;     /* Time before returning to previous layer */
     int8_t scroll_layer;     /* Layer for scroll mode (-1 = disabled) */
 };
 
-/* Key event notification */
-struct wc_key_event {
+/* Key event notification (4 bytes, packed for BLE transfer) */
+struct __attribute__((packed)) wc_key_event {
     uint8_t position;
     bool pressed;
     uint8_t layer;
