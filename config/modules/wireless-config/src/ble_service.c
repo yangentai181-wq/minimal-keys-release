@@ -44,8 +44,9 @@ static struct bt_conn *active_conn = NULL;
 
 static void config_ccc_changed(const struct bt_gatt_attr *attr, uint16_t value)
 {
-    config_notify_enabled = (value == BT_GATT_CCC_INDICATE);
-    LOG_INF("Config notifications %s", config_notify_enabled ? "enabled" : "disabled");
+    /* Accept both NOTIFY and INDICATE flags for Web Bluetooth compatibility */
+    config_notify_enabled = (value != 0);
+    LOG_INF("Config notifications %s (CCC=0x%04x)", config_notify_enabled ? "enabled" : "disabled", value);
 }
 
 static void event_ccc_changed(const struct bt_gatt_attr *attr, uint16_t value)
@@ -116,9 +117,9 @@ static ssize_t write_config(struct bt_conn *conn, const struct bt_gatt_attr *att
 BT_GATT_SERVICE_DEFINE(wireless_config_svc,
     BT_GATT_PRIMARY_SERVICE(BT_UUID_DECLARE_128(WC_BT_SERVICE_UUID)),
 
-    /* Config characteristic (Read/Write/Indicate) */
+    /* Config characteristic (Read/Write/Notify) */
     BT_GATT_CHARACTERISTIC(BT_UUID_DECLARE_128(WC_BT_CONFIG_CHRC_UUID),
-                           BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE | BT_GATT_CHRC_INDICATE,
+                           BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE | BT_GATT_CHRC_NOTIFY,
                            BT_GATT_PERM_READ | BT_GATT_PERM_WRITE,
                            read_config, write_config, NULL),
     BT_GATT_CCC(config_ccc_changed, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
@@ -173,14 +174,8 @@ static ssize_t send_response(uint8_t cmd, uint8_t status, const uint8_t *data, s
     /* Frame the response */
     size_t frame_len = frame_data(tx_buffer, sizeof(tx_buffer), response, resp_len);
 
-    /* Send via GATT indicate */
-    struct bt_gatt_indicate_params params = {
-        .attr = &wireless_config_svc.attrs[1],
-        .data = tx_buffer,
-        .len = frame_len,
-    };
-
-    return bt_gatt_indicate(active_conn, &params);
+    /* Send via GATT notify (compatible with Web Bluetooth) */
+    return bt_gatt_notify(active_conn, &wireless_config_svc.attrs[1], tx_buffer, frame_len);
 }
 
 static void process_message(const uint8_t *data, size_t len)
