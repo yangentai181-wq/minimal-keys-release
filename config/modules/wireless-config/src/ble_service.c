@@ -202,6 +202,63 @@ static void process_message(const uint8_t *data, size_t len)
         break;
     }
 
+    case WC_CMD_KEYMAP: {
+        if (payload_len == 1) {
+            /* Get keymap for specified layer */
+            uint8_t layer_index = payload[0];
+            struct wc_layer_keymap keymap;
+            int ret = wireless_config_get_keymap(layer_index, &keymap);
+            if (ret == 0) {
+                send_response(cmd, WC_STATUS_OK, (uint8_t *)&keymap, sizeof(keymap));
+            } else {
+                send_response(cmd, WC_STATUS_INVALID_PARAM, NULL, 0);
+            }
+        } else if (payload_len >= sizeof(struct wc_layer_keymap)) {
+            /* Set keymap */
+            const struct wc_layer_keymap *keymap =
+                (const struct wc_layer_keymap *)payload;
+            int ret = wireless_config_set_keymap(keymap);
+            send_response(cmd, ret == 0 ? WC_STATUS_OK : WC_STATUS_ERROR, NULL, 0);
+        } else {
+            send_response(cmd, WC_STATUS_INVALID_PARAM, NULL, 0);
+        }
+        break;
+    }
+
+    case WC_CMD_COMBO: {
+        if (payload_len == 0) {
+            /* Get all combos */
+            struct wc_combo_config all_combos[WC_MAX_COMBOS];
+            size_t count;
+            int ret = wireless_config_get_all_combos(all_combos, &count);
+            if (ret == 0) {
+                send_response(cmd, WC_STATUS_OK, (uint8_t *)all_combos,
+                              count * sizeof(struct wc_combo_config));
+            } else {
+                send_response(cmd, WC_STATUS_ERROR, NULL, 0);
+            }
+        } else if (payload_len == 1) {
+            /* Get single combo by ID */
+            uint8_t combo_id = payload[0];
+            struct wc_combo_config combo;
+            int ret = wireless_config_get_combo(combo_id, &combo);
+            if (ret == 0) {
+                send_response(cmd, WC_STATUS_OK, (uint8_t *)&combo, sizeof(combo));
+            } else {
+                send_response(cmd, WC_STATUS_INVALID_PARAM, NULL, 0);
+            }
+        } else if (payload_len >= sizeof(struct wc_combo_config)) {
+            /* Set combo */
+            const struct wc_combo_config *combo =
+                (const struct wc_combo_config *)payload;
+            int ret = wireless_config_set_combo(combo);
+            send_response(cmd, ret == 0 ? WC_STATUS_OK : WC_STATUS_ERROR, NULL, 0);
+        } else {
+            send_response(cmd, WC_STATUS_INVALID_PARAM, NULL, 0);
+        }
+        break;
+    }
+
     case WC_CMD_HOLDTAP: {
         if (payload_len == 0) {
             /* Get current config */
@@ -247,6 +304,24 @@ static void process_message(const uint8_t *data, size_t len)
     case WC_CMD_RESET: {
         int ret = wireless_config_reset();
         send_response(cmd, ret == 0 ? WC_STATUS_OK : WC_STATUS_ERROR, NULL, 0);
+        break;
+    }
+
+    case WC_CMD_AUTOMOUSE: {
+        if (payload_len == 0) {
+            /* Get current config */
+            struct wc_automouse_config config;
+            wireless_config_get_automouse(&config);
+            send_response(cmd, WC_STATUS_OK, (uint8_t *)&config, sizeof(config));
+        } else if (payload_len >= sizeof(struct wc_automouse_config)) {
+            /* Set new config */
+            const struct wc_automouse_config *config =
+                (const struct wc_automouse_config *)payload;
+            int ret = wireless_config_set_automouse(config);
+            send_response(cmd, ret == 0 ? WC_STATUS_OK : WC_STATUS_ERROR, NULL, 0);
+        } else {
+            send_response(cmd, WC_STATUS_INVALID_PARAM, NULL, 0);
+        }
         break;
     }
 
