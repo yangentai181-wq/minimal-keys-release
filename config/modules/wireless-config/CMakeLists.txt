@@ -9,6 +9,7 @@ if(CONFIG_WIRELESS_CONFIG)
         src/wireless_config.c
         src/ble_service.c
         src/config_handler.c
+        src/key_listener.c
     )
 
     if(CONFIG_WIRELESS_CONFIG_PERSIST_SETTINGS)

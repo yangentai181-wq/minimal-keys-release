@@ -99,8 +99,9 @@ static void config_ccc_changed(const struct bt_gatt_attr *attr, uint16_t value)
 
 static void event_ccc_changed(const struct bt_gatt_attr *attr, uint16_t value)
 {
-    event_notify_enabled = (value == BT_GATT_CCC_NOTIFY);
-    LOG_INF("Event notifications %s", event_notify_enabled ? "enabled" : "disabled");
+    /* Accept any non-zero value for Web Bluetooth compatibility */
+    event_notify_enabled = (value != 0);
+    LOG_INF("Event notifications %s (CCC=0x%04x)", event_notify_enabled ? "enabled" : "disabled", value);
 }
 
 static ssize_t read_config(struct bt_conn *conn, const struct bt_gatt_attr *attr,
