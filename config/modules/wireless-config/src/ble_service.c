@@ -58,7 +58,7 @@ static void wc_connected(struct bt_conn *conn, uint8_t err)
         LOG_WRN("Connection failed (err 0x%02x)", err);
         return;
     }
-    LOG_INF("WC: BLE connected (conn=%p)", conn);
+    LOG_INF("WC: BLE connected");
     /* Do NOT set active_conn here — this fires for ALL connections
      * including the split link between halves. active_conn is set
      * in write_config() when the host actually sends a command. */
@@ -67,7 +67,7 @@ static void wc_connected(struct bt_conn *conn, uint8_t err)
 
 static void wc_disconnected(struct bt_conn *conn, uint8_t reason)
 {
-    LOG_INF("WC: BLE disconnected (conn=%p, reason 0x%02x)", conn, reason);
+    LOG_INF("WC: BLE disconnected (reason 0x%02x)", reason);
     /* Only clear state if this is the config connection */
     if (conn == active_conn) {
         active_conn = NULL;
