@@ -5,7 +5,9 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/gatt.h>
+#include <zephyr/init.h>
 #include <zephyr/logging/log.h>
 
 #include <wireless_config/wireless_config.h>
@@ -25,8 +27,8 @@ static size_t rx_len = 0;
 static bool rx_escaped = false;
 static bool rx_in_frame = false;
 
-/* Transmit buffer */
-#define TX_BUF_SIZE 256
+/* Transmit buffer - must accommodate framed response (worst case: 230 * 2 + 2 = 462) */
+#define TX_BUF_SIZE 512
 static uint8_t tx_buffer[TX_BUF_SIZE];
 
 /* Protocol version */
@@ -41,6 +43,47 @@ static ssize_t send_response(uint8_t cmd, uint8_t status, const uint8_t *data, s
 static bool config_notify_enabled = false;
 static bool event_notify_enabled = false;
 static struct bt_conn *active_conn = NULL;
+
+/* Reset receive state on disconnect to prevent stale frame data */
+static void reset_rx_state(void)
+{
+    rx_len = 0;
+    rx_escaped = false;
+    rx_in_frame = false;
+}
+
+static void wc_connected(struct bt_conn *conn, uint8_t err)
+{
+    if (err) {
+        LOG_WRN("Connection failed (err 0x%02x)", err);
+        return;
+    }
+    LOG_INF("WC: BLE connected");
+    active_conn = conn;
+    reset_rx_state();
+}
+
+static void wc_disconnected(struct bt_conn *conn, uint8_t reason)
+{
+    LOG_INF("WC: BLE disconnected (reason 0x%02x)", reason);
+    active_conn = NULL;
+    config_notify_enabled = false;
+    event_notify_enabled = false;
+    reset_rx_state();
+}
+
+static struct bt_conn_cb wc_conn_callbacks = {
+    .connected = wc_connected,
+    .disconnected = wc_disconnected,
+};
+
+static int wc_ble_init(void)
+{
+    bt_conn_cb_register(&wc_conn_callbacks);
+    return 0;
+}
+
+SYS_INIT(wc_ble_init, APPLICATION, 90);
 
 static void config_ccc_changed(const struct bt_gatt_attr *attr, uint16_t value)
 {
@@ -159,14 +202,15 @@ static ssize_t send_response(uint8_t cmd, uint8_t status, const uint8_t *data, s
         return -ENOTCONN;
     }
 
-    /* Build response: [cmd][status][data...] */
-    uint8_t response[64];
+    /* Build response: [cmd][status][data...]
+     * Max payload: all combos = 16 * 14 = 224 bytes + 2 header = 226 bytes */
+    uint8_t response[230];
     size_t resp_len = 0;
 
     response[resp_len++] = cmd;
     response[resp_len++] = status;
 
-    if (data && len > 0 && resp_len + len < sizeof(response)) {
+    if (data && len > 0 && resp_len + len <= sizeof(response)) {
         memcpy(&response[resp_len], data, len);
         resp_len += len;
     }
