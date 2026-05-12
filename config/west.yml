@@ -13,14 +13,14 @@ manifest:
   projects:
     - name: zmk
       remote: hyhy-masa
-      revision: 09ee8b42
+      revision: e4253ecd51
       import: app/west.yml
     - name: zmk-pmw3610-driver
       remote: hyhy-masa
-      revision: c9ab9a3f
+      revision: 1d9c2c68ca
     - name: zmk-rgbled-widget
       remote: caksoylar
-      revision: e9472d6c
+      revision: b0b8cc2bc7
     - name: zmk-raw-hid
       remote: zzeneg
       revision: e25e325adc
