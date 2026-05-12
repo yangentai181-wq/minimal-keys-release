@@ -20,7 +20,7 @@ manifest:
       revision: 1d9c2c68ca
     - name: zmk-rgbled-widget
       remote: caksoylar
-      revision: b0b8cc2bc7
+      revision: 8756cb7b81
     - name: zmk-raw-hid
       remote: zzeneg
       revision: e25e325adc
