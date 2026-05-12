@@ -4,8 +4,12 @@ manifest:
       url-base: https://github.com/zmkfirmware
     - name: hyhy-masa
       url-base: https://github.com/hyhy-masa
-    - name: caksoylar  # <-- new entry
-      url-base: https://github.com/caksoylar  
+    - name: caksoylar
+      url-base: https://github.com/caksoylar
+    - name: zzeneg
+      url-base: https://github.com/zzeneg
+    - name: srwi
+      url-base: https://github.com/srwi
   projects:
     - name: zmk
       remote: hyhy-masa
@@ -17,5 +21,11 @@ manifest:
     - name: zmk-rgbled-widget
       remote: caksoylar
       revision: e9472d6c
+    - name: zmk-raw-hid
+      remote: zzeneg
+      revision: e25e325adc
+    - name: zmk-keypeek-layer-notifier
+      remote: srwi
+      revision: ad68863851
   self:
     path: config
