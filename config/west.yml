@@ -31,6 +31,6 @@ manifest:
       revision: ad68863851
     - name: zmk-input-notifier
       remote: yangentai181-wq
-      revision: d3d3642937
+      revision: c3952a0f81
   self:
     path: config
