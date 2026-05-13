@@ -10,6 +10,8 @@ manifest:
       url-base: https://github.com/zzeneg
     - name: srwi
       url-base: https://github.com/srwi
+    - name: yangentai181-wq
+      url-base: https://github.com/yangentai181-wq
   projects:
     - name: zmk
       remote: hyhy-masa
@@ -27,5 +29,8 @@ manifest:
     - name: zmk-keypeek-layer-notifier
       remote: srwi
       revision: ad68863851
+    - name: zmk-input-notifier
+      remote: yangentai181-wq
+      revision: 1c73450413
   self:
     path: config
