@@ -60,6 +60,9 @@
         reg = <0>;
         spi-max-frequency = <2000000>;
         irq-gpios = <&xiao_d 3 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
-        scroll-layers = <3>;
+        // L7 (Scroll layer) がアクティブな時だけポインタ移動をスクロール
+        // ホイールに変換する。L0 の Space を hold (= &lt 7 SPACE) すると
+        // L7 が一時的に立ち上がり、その間だけスクロールモードになる。
+        scroll-layers = <7>;
     };
 };
