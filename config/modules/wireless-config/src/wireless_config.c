@@ -40,7 +40,7 @@ LOG_MODULE_REGISTER(wireless_config, CONFIG_WIRELESS_CONFIG_LOG_LEVEL);
 static const char *const WC_DEV_KP = WC_DEV(kp);
 static const char *const WC_DEV_MO = WC_DEV(mo);
 static const char *const WC_DEV_LT = WC_DEV(lt);
-static const char *const WC_DEV_TG = WC_DEV(tg);
+static const char *const WC_DEV_TG = WC_DEV(tog); /* ZMK toggle-layer nodelabel is &tog */
 static const char *const WC_DEV_TRANS = WC_DEV(trans);
 
 static struct zmk_behavior_binding wc_make_binding(const char *dev, uint32_t p1, uint32_t p2)

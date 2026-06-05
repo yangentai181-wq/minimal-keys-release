@@ -25,8 +25,10 @@ static size_t rx_len = 0;
 static bool rx_escaped = false;
 static bool rx_in_frame = false;
 
-/* Transmit buffer */
-#define TX_BUF_SIZE 256
+/* Transmit buffer — must fit the framed response. Worst case is all combos
+ * (16*14 + 2 = 226 bytes payload), and framing can escape every byte:
+ * 226*2 + 2 (SOF/EOF) = 454. */
+#define TX_BUF_SIZE 512
 static uint8_t tx_buffer[TX_BUF_SIZE];
 
 /* Protocol version */
@@ -87,6 +89,17 @@ static ssize_t write_config(struct bt_conn *conn, const struct bt_gatt_attr *att
             continue;
         }
 
+        if (rx_escaped) {
+            /* Previous byte was ESC: store this byte literally, even if it
+             * equals SOF/ESC/EOF. Must precede the control-byte checks below,
+             * otherwise an escaped 0xAB/0xAC/0xAD corrupts/truncates the frame. */
+            rx_escaped = false;
+            if (rx_len < RX_BUF_SIZE) {
+                rx_buffer[rx_len++] = byte;
+            }
+            continue;
+        }
+
         if (byte == MSG_EOF) {
             /* End of frame - process message */
             process_message(rx_buffer, rx_len);
@@ -98,10 +111,6 @@ static ssize_t write_config(struct bt_conn *conn, const struct bt_gatt_attr *att
         if (byte == MSG_ESC) {
             rx_escaped = true;
             continue;
-        }
-
-        if (rx_escaped) {
-            rx_escaped = false;
         }
 
         if (rx_len < RX_BUF_SIZE) {
@@ -159,8 +168,10 @@ static ssize_t send_response(uint8_t cmd, uint8_t status, const uint8_t *data, s
         return -ENOTCONN;
     }
 
-    /* Build response: [cmd][status][data...] */
-    uint8_t response[64];
+    /* Build response: [cmd][status][data...]
+     * Max payload = all combos (16*14=224) + 2 header = 226 bytes.
+     * (Was 64, which silently dropped the 87-byte keymap payload.) */
+    uint8_t response[230];
     size_t resp_len = 0;
 
     response[resp_len++] = cmd;
