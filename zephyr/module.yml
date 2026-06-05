@@ -1,3 +1,5 @@
 build:
   settings:
     board_root: .
+  cmake: config/modules/wireless-config
+  kconfig: config/modules/wireless-config/Kconfig
