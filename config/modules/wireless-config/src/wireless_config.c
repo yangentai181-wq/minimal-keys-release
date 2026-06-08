@@ -215,16 +215,33 @@ int wireless_config_set_keymap(const struct wc_layer_keymap *keymap)
     }
 
     int last_err = 0;
+    int changed = 0;
     for (uint8_t pos = 0; pos < WC_NUM_KEYS; pos++) {
+        /* Diff against the current binding and only write positions the host
+         * actually changed. The u16 scheme is lossy (it collapses &none,
+         * unsupported behaviors like &bt/&mt/&to, and modifier/consumer keycodes
+         * to a value that does not round-trip), but the host echoes back exactly
+         * the lossy u16 we produced on GET for untouched keys. So an unchanged
+         * position compares equal here and its original ZMK binding is preserved
+         * intact — only genuinely edited keys are rewritten as &kp/&mo/&lt/&tog. */
+        const struct zmk_behavior_binding *cur =
+            zmk_keymap_get_layer_binding_at_idx(id, pos);
+        if (cur && wc_binding_to_keycode(cur) == keymap->keycodes[pos]) {
+            continue;
+        }
+
         struct zmk_behavior_binding b = wc_keycode_to_binding(keymap->keycodes[pos]);
         int ret = zmk_keymap_set_layer_binding_at_idx(id, pos, b);
         if (ret < 0) {
             last_err = ret;
             LOG_WRN("set binding failed: layer=%d pos=%d err=%d",
                     keymap->layer_index, pos, ret);
+        } else {
+            changed++;
         }
     }
-    LOG_INF("Keymap applied to ZMK runtime: layer=%d", keymap->layer_index);
+    LOG_INF("Keymap applied to ZMK runtime: layer=%d changed=%d",
+            keymap->layer_index, changed);
     return last_err;
 }
 

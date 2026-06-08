@@ -177,7 +177,7 @@ static ssize_t send_response(uint8_t cmd, uint8_t status, const uint8_t *data, s
     response[resp_len++] = cmd;
     response[resp_len++] = status;
 
-    if (data && len > 0 && resp_len + len < sizeof(response)) {
+    if (data && len > 0 && resp_len + len <= sizeof(response)) {
         memcpy(&response[resp_len], data, len);
         resp_len += len;
     }
@@ -185,8 +185,21 @@ static ssize_t send_response(uint8_t cmd, uint8_t status, const uint8_t *data, s
     /* Frame the response */
     size_t frame_len = frame_data(tx_buffer, sizeof(tx_buffer), response, resp_len);
 
-    /* Send via GATT notify (compatible with Web Bluetooth) */
-    return bt_gatt_notify(active_conn, &wireless_config_svc.attrs[1], tx_buffer, frame_len);
+    /* Send in MTU-3 chunks so large responses (e.g. keymap ~91 B framed) survive
+     * connections where the MTU was not negotiated up from the default 23 bytes. */
+    uint16_t mtu = bt_gatt_get_mtu(active_conn);
+    size_t chunk_size = (mtu > 3) ? (size_t)(mtu - 3) : 1U;
+
+    for (size_t offset = 0; offset < frame_len; offset += chunk_size) {
+        size_t this_chunk = MIN(chunk_size, frame_len - offset);
+        int ret = bt_gatt_notify(active_conn, &wireless_config_svc.attrs[1],
+                                 tx_buffer + offset, this_chunk);
+        if (ret < 0) {
+            return ret;
+        }
+    }
+
+    return 0;
 }
 
 static void process_message(const uint8_t *data, size_t len)
