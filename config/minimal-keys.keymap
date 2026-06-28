@@ -101,7 +101,7 @@
         };
 
         // ───────────────────────────────────────────────────────────────
-        // L4: Mouse (data-only; auto-enter is deferred)
+        // L4: Mouse (Auto Mouse target)
         //   Most cells force-return to L0 via &to 0 so the layer self-
         //   ejects unless the user is on a click/scroll cell.
         // ───────────────────────────────────────────────────────────────

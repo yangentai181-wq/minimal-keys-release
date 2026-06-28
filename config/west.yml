@@ -6,31 +6,38 @@ manifest:
       url-base: https://github.com/hyhy-masa
     - name: caksoylar
       url-base: https://github.com/caksoylar
-    - name: zzeneg
-      url-base: https://github.com/zzeneg
-    - name: srwi
-      url-base: https://github.com/srwi
-    - name: yangentai181-wq
-      url-base: https://github.com/yangentai181-wq
   projects:
     - name: zmk
       remote: hyhy-masa
-      revision: e4253ecd51
+      revision: 957c4b0c
       import: app/west.yml
-    - name: zmk-pmw3610-driver
+    - name: pmw3610-driver-minimal
       remote: hyhy-masa
-      revision: 1d9c2c68ca
+      revision: "ed93886"
+      path: modules/pmw3610-driver-minimal
     - name: zmk-rgbled-widget
       remote: caksoylar
-      revision: 8756cb7b81
-    - name: zmk-raw-hid
-      remote: zzeneg
-      revision: e25e325adc
-    - name: zmk-keypeek-layer-notifier
-      remote: srwi
-      revision: ad68863851
-    - name: zmk-input-notifier
-      remote: yangentai181-wq
-      revision: efa410ab53
+      revision: e9472d6c
+    - name: zmk-module-runtime-input-processor
+      remote: hyhy-masa
+      revision: 8103d061
+    - name: zmk-module-ble-management
+      remote: hyhy-masa
+      revision: 851661cd
+    - name: zmk-behavior-runtime-sensor-rotate
+      remote: hyhy-masa
+      revision: efed4f23
+    - name: zmk-module-runtime-combos
+      remote: hyhy-masa
+      revision: 119de78
+    - name: zmk-module-battery-history
+      remote: hyhy-masa
+      revision: 465e53e9
+    - name: zmk-module-settings-rpc
+      remote: hyhy-masa
+      revision: ad1c995c
+    - name: zmk-module-hold-tap-rpc
+      remote: hyhy-masa
+      revision: 2a352a2
   self:
     path: config

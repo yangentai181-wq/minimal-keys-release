@@ -1,4 +1,7 @@
 #include "minimal-keys.dtsi"
+#include <dt-bindings/input/input-event-codes.h>
+#include <input/processors/runtime-input-processor.dtsi>
+
 &xiao_serial { status = "disabled"; };
 &default_transform {
     col-offset = <6>;
@@ -43,6 +46,7 @@
     trackball_listener {
         compatible = "zmk,input-listener";
         device = <&trackball>;
+        input-processors = <&mouse_runtime_input_processor>;
     };
 };
 
@@ -60,9 +64,9 @@
         reg = <0>;
         spi-max-frequency = <2000000>;
         irq-gpios = <&xiao_d 3 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
-        // L7 (Scroll layer) がアクティブな時だけポインタ移動をスクロール
-        // ホイールに変換する。L0 の Space を hold (= &lt 7 SPACE) すると
-        // L7 が一時的に立ち上がり、その間だけスクロールモードになる。
+        // Trackball movement enters L4 automatically; L7 remains a
+        // separate manual scroll layer for Space hold.
+        automouse-layer = <4>;
         scroll-layers = <7>;
     };
 };
