@@ -1,5 +1,6 @@
 #include "minimal-keys.dtsi"
 #include <dt-bindings/input/input-event-codes.h>
+#include <input/processors.dtsi>
 #include <input/processors/runtime-input-processor.dtsi>
 
 &xiao_serial { status = "disabled"; };
@@ -47,7 +48,17 @@
         compatible = "zmk,input-listener";
         device = <&trackball>;
         input-processors = <&mouse_runtime_input_processor>;
+
+        scroll_layer {
+            layers = <7>;
+            input-processors = <&zip_xy_to_scroll_mapper &scroll_runtime_input_processor>;
+        };
     };
+};
+
+&scroll_runtime_input_processor {
+    scale-divisor = <16>;
+    y-invert;
 };
 
 &spi0 {
@@ -64,9 +75,8 @@
         reg = <0>;
         spi-max-frequency = <2000000>;
         irq-gpios = <&xiao_d 3 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
-        // Trackball movement enters L4 automatically; L7 remains a
-        // separate manual scroll layer for Space hold.
+        // Trackball movement enters L4 automatically. L7 scroll handling
+        // lives in trackball_listener so it follows ZMK layer state.
         automouse-layer = <4>;
-        scroll-layers = <7>;
     };
 };
