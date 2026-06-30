@@ -6,11 +6,26 @@ manifest:
       url-base: https://github.com/hyhy-masa
     - name: caksoylar
       url-base: https://github.com/caksoylar
+    - name: zzeneg
+      url-base: https://github.com/zzeneg
+    - name: srwi
+      url-base: https://github.com/srwi
+    - name: yangentai181-wq
+      url-base: https://github.com/yangentai181-wq
   projects:
     - name: zmk
       remote: hyhy-masa
       revision: 957c4b0c
       import: app/west.yml
+    - name: zmk-raw-hid
+      remote: zzeneg
+      revision: e25e325adc90fccb60cc08393b8c2b0ba6d647c7
+    - name: zmk-keypeek-layer-notifier
+      remote: srwi
+      revision: ad688638517baf527e66a20596aa152cb42a1cd4
+    - name: zmk-input-notifier
+      remote: yangentai181-wq
+      revision: efa410ab535374e82d1e512bd832cb7e7dd9ff30
     - name: pmw3610-driver-minimal
       remote: hyhy-masa
       revision: "ed93886"
