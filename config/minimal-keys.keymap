@@ -1,6 +1,7 @@
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/outputs.h>
 #include <dt-bindings/zmk/pointing.h>
 
 #undef ZMK_POINTING_DEFAULT_SCRL_VAL
@@ -133,13 +134,18 @@
 
         // ───────────────────────────────────────────────────────────────
         // L6: Bluetooth
-        //   Row1: BT_SEL 0..3, BT_CLR_ALL
+        //   Row1: BT_SEL 0..3, BT_CLR_ALL | 出力切替 USB / BLE / TOG
         //   Row2: BT_CLR (current), BT_DISC 0..3
         //   Row3: bootloader on both far ends
+        //
+        //   &out OUT_USB は Studio USB 接続の要:
+        //   ZMK Studio RPC は「選択中の出力先」の transport でしか
+        //   待ち受けない（zmk rpc.c refresh_selected_transport）。
+        //   出力先がBLEのままだと USB CDC は開けても RPC 無応答になる。
         // ───────────────────────────────────────────────────────────────
         layer_6 {
             bindings = <
-&bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_CLR_ALL                                          &trans  &trans  &trans  &trans  &trans
+&bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_CLR_ALL                                          &out OUT_USB  &out OUT_BLE  &out OUT_TOG  &trans  &trans
 &bt BT_CLR    &bt BT_DISC 0 &bt BT_DISC 1 &bt BT_DISC 2 &bt BT_DISC 3   &trans            &trans                &trans  &trans  &trans  &trans  &trans
 &bootloader   &trans        &trans        &trans        &trans          &trans            &trans                &trans  &trans  &trans  &trans  &bootloader
 &trans        &trans        &trans        &trans        &trans          &trans            &trans                &trans                          &trans
