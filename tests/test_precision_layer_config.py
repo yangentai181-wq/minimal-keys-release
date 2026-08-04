@@ -11,7 +11,7 @@ KEYMAP = ROOT / "config/minimal-keys.keymap"
 OVERLAY = ROOT / "config/boards/shields/minimal-keys/minimal-keys_R.overlay"
 CONF = ROOT / "config/boards/shields/minimal-keys/minimal-keys_R.conf"
 MANIFEST = ROOT / "config/west.yml"
-PMW_MODULE_REVISION = "eb89c276d39eb941dbe196d0ba92578ff1d33728"
+PMW_MODULE_REVISION = "c1ce02ff949bcd0cc4c53b05ffea2db30be9fa12"
 
 
 def _node_body(source: str, node_name: str) -> str:
@@ -61,6 +61,12 @@ class PrecisionLayerConfigTest(unittest.TestCase):
         bindings = re.search(r"bindings\s*=\s*<(.*?)>;", precision_layer, re.DOTALL)
         self.assertIsNotNone(bindings, "precision_layer must define bindings")
         self.assertEqual(re.findall(r"&\w+", bindings.group(1)), ["&trans"] * 43)
+
+    def test_precision_layer_is_explicitly_index_8(self) -> None:
+        """Breaks if the internal layer is moved away from the PMW snipe index."""
+        keymap = _node_body(self.keymap, "keymap")
+        layer_names = re.findall(r"^ {8}([A-Za-z_][A-Za-z0-9_]*)\s*\{", keymap, re.MULTILINE)
+        self.assertEqual(layer_names.index("precision_layer"), 8)
 
     def test_trackball_switches_to_internal_precision_layer_8(self) -> None:
         """Breaks if PMW snipe mode activates a layer other than the reserved L8."""
