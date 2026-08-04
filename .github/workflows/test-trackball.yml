@@ -55,9 +55,15 @@ jobs:
         working-directory: workspace
         env:
           ZEPHYR_TOOLCHAIN_VARIANT: host
-        run: >-
-          west twister
-          -T modules/pmw3610-driver-minimal/tests/trackball_profile
-          -T modules/pmw3610-driver-minimal/tests/trackball_settings
-          -T modules/pmw3610-driver-minimal/tests/studio_trackball_settings
-          -p native_posix_64
+        run: |
+          set +e
+          west twister \
+            -T modules/pmw3610-driver-minimal/tests/trackball_profile \
+            -T modules/pmw3610-driver-minimal/tests/trackball_settings \
+            -T modules/pmw3610-driver-minimal/tests/studio_trackball_settings \
+            -p native_posix_64
+          status=$?
+          if [ "$status" -ne 0 ]; then
+            find twister-out -name build.log -type f -exec sh -c 'echo "--- $1"; cat "$1"' _ {} \;
+          fi
+          exit "$status"
