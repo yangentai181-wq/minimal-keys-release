@@ -27,7 +27,7 @@ manifest:
       remote: yangentai181-wq
       revision: efa410ab535374e82d1e512bd832cb7e7dd9ff30
     - name: pmw3610-driver-minimal
-      remote: hyhy-masa
+      remote: yangentai181-wq
       revision: 32ef7db5c119a80ee36c5bb27a55de393a063a19
       path: modules/pmw3610-driver-minimal
     - name: zmk-rgbled-widget

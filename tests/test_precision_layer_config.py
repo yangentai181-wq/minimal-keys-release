@@ -11,6 +11,7 @@ KEYMAP = ROOT / "config/minimal-keys.keymap"
 OVERLAY = ROOT / "config/boards/shields/minimal-keys/minimal-keys_R.overlay"
 CONF = ROOT / "config/boards/shields/minimal-keys/minimal-keys_R.conf"
 MANIFEST = ROOT / "config/west.yml"
+PMW_MODULE_REMOTE = "yangentai181-wq"
 PMW_MODULE_REVISION = "32ef7db5c119a80ee36c5bb27a55de393a063a19"
 
 
@@ -33,7 +34,7 @@ def _node_body(source: str, node_name: str) -> str:
     return source[match.end() : index - 1]
 
 
-def _project_revision(manifest: str, project_name: str) -> str:
+def _project_property(manifest: str, project_name: str, property_name: str) -> str:
     project = re.search(
         rf"^    - name: {re.escape(project_name)}$([\s\S]*?)(?=^    - name:|^  self:)",
         manifest,
@@ -42,10 +43,14 @@ def _project_revision(manifest: str, project_name: str) -> str:
     if not project:
         raise AssertionError(f"project {project_name!r} was not found")
 
-    revision = re.search(r"^      revision: [\"']?([^\"'\s]+)[\"']?$", project.group(1), re.MULTILINE)
-    if not revision:
-        raise AssertionError(f"project {project_name!r} has no revision")
-    return revision.group(1)
+    value = re.search(
+        rf"^      {re.escape(property_name)}: [\"']?([^\"'\s]+)[\"']?$",
+        project.group(1),
+        re.MULTILINE,
+    )
+    if not value:
+        raise AssertionError(f"project {project_name!r} has no {property_name}")
+    return value.group(1)
 
 
 class PrecisionLayerConfigTest(unittest.TestCase):
@@ -88,8 +93,10 @@ class PrecisionLayerConfigTest(unittest.TestCase):
             self.assertEqual(actual.get(setting), value, setting)
 
     def test_pmw_module_is_pinned_to_the_precision_settings_commit(self) -> None:
-        """Breaks if the manifest reverts to the old driver or a moving revision."""
-        revision = _project_revision(self.manifest, "pmw3610-driver-minimal")
+        """Breaks if the manifest uses an unavailable fork, old driver, or moving revision."""
+        remote = _project_property(self.manifest, "pmw3610-driver-minimal", "remote")
+        revision = _project_property(self.manifest, "pmw3610-driver-minimal", "revision")
+        self.assertEqual(remote, PMW_MODULE_REMOTE)
         self.assertEqual(revision, PMW_MODULE_REVISION)
         self.assertRegex(revision, r"^[0-9a-f]{40}$")
         self.assertNotEqual(revision, "ed93886")
