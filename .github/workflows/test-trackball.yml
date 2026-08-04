@@ -48,7 +48,7 @@ jobs:
 
       - name: Install Twister setuptools compatibility
         run: |
-          python -m pip install 'setuptools<81'
+          python -m pip install setuptools==80.9.0
           python -c 'import pkg_resources'
 
       - name: Run trackball Twister tests
@@ -61,7 +61,8 @@ jobs:
             -T modules/pmw3610-driver-minimal/tests/trackball_profile \
             -T modules/pmw3610-driver-minimal/tests/trackball_settings \
             -T modules/pmw3610-driver-minimal/tests/studio_trackball_settings \
-            -p native_posix_64
+            -p native_posix_64 \
+            --extra-args ZEPHYR_MODULES="$PWD/modules/pmw3610-driver-minimal"
           status=$?
           if [ "$status" -ne 0 ]; then
             find twister-out -name build.log -type f -exec sh -c 'echo "--- $1"; cat "$1"' _ {} \;
