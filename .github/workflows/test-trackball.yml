@@ -37,7 +37,10 @@ jobs:
 
       - name: Install ZMK requirements
         working-directory: workspace
-        run: python -m pip install -r zmk/app/requirements.txt
+        run: >-
+          python -m pip install
+          -r zephyr/scripts/requirements.txt
+          -r zmk/app/scripts/requirements.txt
 
       - name: Export Zephyr
         working-directory: workspace
