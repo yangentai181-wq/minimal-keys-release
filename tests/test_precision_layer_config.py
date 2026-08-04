@@ -11,7 +11,7 @@ KEYMAP = ROOT / "config/minimal-keys.keymap"
 OVERLAY = ROOT / "config/boards/shields/minimal-keys/minimal-keys_R.overlay"
 CONF = ROOT / "config/boards/shields/minimal-keys/minimal-keys_R.conf"
 MANIFEST = ROOT / "config/west.yml"
-PMW_MODULE_REVISION = "c1ce02ff949bcd0cc4c53b05ffea2db30be9fa12"
+PMW_MODULE_REVISION = "32ef7db5c119a80ee36c5bb27a55de393a063a19"
 
 
 def _node_body(source: str, node_name: str) -> str:
