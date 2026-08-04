@@ -28,7 +28,7 @@ manifest:
       revision: efa410ab535374e82d1e512bd832cb7e7dd9ff30
     - name: pmw3610-driver-minimal
       remote: hyhy-masa
-      revision: "ed93886"
+      revision: eb89c276d39eb941dbe196d0ba92578ff1d33728
       path: modules/pmw3610-driver-minimal
     - name: zmk-rgbled-widget
       remote: caksoylar

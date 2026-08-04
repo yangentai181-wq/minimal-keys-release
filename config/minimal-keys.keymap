@@ -166,5 +166,18 @@
 &trans &trans &trans &trans &trans &trans            &trans                 &trans                       &trans
             >;
         };
+
+        // ───────────────────────────────────────────────────────────────
+        // L8: Internal precision mode (all-trans)
+        //   Reserved for PMW3610 snipe mode. Do not make user-editable.
+        // ───────────────────────────────────────────────────────────────
+        precision_layer {
+            bindings = <
+&trans &trans &trans &trans &trans                                          &trans &trans &trans &trans &trans
+&trans &trans &trans &trans &trans &trans            &trans                 &trans &trans &trans &trans &trans
+&trans &trans &trans &trans &trans &trans            &trans                 &trans &trans &trans &trans &trans
+&trans &trans &trans &trans &trans &trans            &trans                 &trans                       &trans
+            >;
+        };
     };
 };

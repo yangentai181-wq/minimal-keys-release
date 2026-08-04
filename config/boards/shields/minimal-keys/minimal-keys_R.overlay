@@ -76,7 +76,9 @@
         spi-max-frequency = <2000000>;
         irq-gpios = <&xiao_d 3 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
         // Trackball movement enters L4 automatically. L7 scroll handling
-        // lives in trackball_listener so it follows ZMK layer state.
+        // lives in trackball_listener so it follows ZMK layer state. L8 is
+        // reserved internally by the driver while snipe mode is active.
         automouse-layer = <4>;
+        snipe-layers = <8>;
     };
 };
