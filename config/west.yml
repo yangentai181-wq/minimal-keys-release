@@ -28,7 +28,7 @@ manifest:
       revision: efa410ab535374e82d1e512bd832cb7e7dd9ff30
     - name: pmw3610-driver-minimal
       remote: yangentai181-wq
-      revision: 6b00c26e72166ed48eb8528544c20dd2e9d991ae
+      revision: b882cd3d571b25cc9c1069c5a0f94a9961f1396b
       path: modules/pmw3610-driver-minimal
     - name: zmk-rgbled-widget
       remote: caksoylar

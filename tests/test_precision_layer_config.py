@@ -12,7 +12,7 @@ OVERLAY = ROOT / "config/boards/shields/minimal-keys/minimal-keys_R.overlay"
 CONF = ROOT / "config/boards/shields/minimal-keys/minimal-keys_R.conf"
 MANIFEST = ROOT / "config/west.yml"
 PMW_MODULE_REMOTE = "yangentai181-wq"
-PMW_MODULE_REVISION = "6b00c26e72166ed48eb8528544c20dd2e9d991ae"
+PMW_MODULE_REVISION = "b882cd3d571b25cc9c1069c5a0f94a9961f1396b"
 
 
 def _node_body(source: str, node_name: str) -> str:
