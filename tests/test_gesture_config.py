@@ -56,9 +56,14 @@ class GestureConfigTest(unittest.TestCase):
         module = MODULE.read_text()
         self.assertIn("cmake: .", module)
         self.assertIn("dts_root: .", module)
-        self.assertIn("target_sources(app PRIVATE src/behavior_gesture_slot.c)", MODULE_CMAKE.read_text())
+        self.assertIn("src/behavior_gesture_slot.c", MODULE_CMAKE.read_text())
         self.assertTrue(MODULE_SOURCE.is_file())
         self.assertTrue(MODULE_BINDING.is_file())
+
+    def test_gesture_adapter_is_compiled_only_when_the_gesture_feature_is_enabled(self) -> None:
+        cmake = MODULE_CMAKE.read_text()
+        self.assertIn("target_sources_ifdef(CONFIG_ZMK_MOUSE_GESTURE app PRIVATE", cmake)
+        self.assertIn("src/behavior_gesture_slot.c", cmake)
 
     def test_gesture_layer_is_reserved_at_index_nine(self) -> None:
         layer_names = re.findall(r"^ {8}([A-Za-z_][A-Za-z0-9_]*)\s*\{", _node_body(self.keymap, "keymap"), re.MULTILINE)

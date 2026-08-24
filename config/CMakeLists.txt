@@ -1,1 +1,1 @@
-target_sources(app PRIVATE src/behavior_gesture_slot.c)
+target_sources_ifdef(CONFIG_ZMK_MOUSE_GESTURE app PRIVATE src/behavior_gesture_slot.c)
