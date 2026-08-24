@@ -10,7 +10,11 @@ ROOT = Path(__file__).resolve().parents[1]
 KEYMAP = ROOT / "config/minimal-keys.keymap"
 OVERLAY = ROOT / "config/boards/shields/minimal-keys/minimal-keys_R.overlay"
 MANIFEST = ROOT / "config/west.yml"
-SOURCE = ROOT / "src/behavior_gesture_slot.c"
+SOURCE = ROOT / "config/src/behavior_gesture_slot.c"
+MODULE = ROOT / "config/zephyr/module.yml"
+MODULE_CMAKE = ROOT / "config/CMakeLists.txt"
+MODULE_SOURCE = ROOT / "config/src/behavior_gesture_slot.c"
+MODULE_BINDING = ROOT / "config/dts/bindings/behaviors/minimal-keys,behavior-gesture-slot.yaml"
 GESTURE_REVISION = "62f3c9d8ca6763e160b73efc46108c61dd0243a0"
 
 
@@ -46,6 +50,15 @@ class GestureConfigTest(unittest.TestCase):
         self.assertEqual(project_property(self.manifest, "zmk-mouse-gesture", "remote"), "kot149")
         self.assertEqual(project_property(self.manifest, "zmk-mouse-gesture", "revision"), GESTURE_REVISION)
         self.assertRegex(GESTURE_REVISION, r"^[0-9a-f]{40}$")
+
+    def test_manifest_config_root_registers_the_gesture_module_for_build_and_dts(self) -> None:
+        """The manifest self path is config, so its module must expose both assets."""
+        module = MODULE.read_text()
+        self.assertIn("cmake: .", module)
+        self.assertIn("dts_root: .", module)
+        self.assertIn("target_sources(app PRIVATE src/behavior_gesture_slot.c)", MODULE_CMAKE.read_text())
+        self.assertTrue(MODULE_SOURCE.is_file())
+        self.assertTrue(MODULE_BINDING.is_file())
 
     def test_gesture_layer_is_reserved_at_index_nine(self) -> None:
         layer_names = re.findall(r"^ {8}([A-Za-z_][A-Za-z0-9_]*)\s*\{", _node_body(self.keymap, "keymap"), re.MULTILINE)
