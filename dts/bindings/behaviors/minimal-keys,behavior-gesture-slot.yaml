@@ -1,0 +1,5 @@
+description: Invoke a binding in the reserved gesture layer by physical position
+
+compatible: "minimal-keys,behavior-gesture-slot"
+
+include: one_param.yaml

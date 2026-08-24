@@ -44,12 +44,16 @@ class ScrollLayerConfigTest(unittest.TestCase):
         self.assertNotIn("scroll-layers", trackball)
 
         listener = _node_body(self.overlay, "trackball_listener")
-        self.assertIn("input-processors = <&mouse_runtime_input_processor>;", listener)
+        self.assertIn(
+            "input-processors = <&zip_mouse_gesture &mouse_runtime_input_processor>;",
+            listener,
+        )
 
         scroll_layer = _node_body(listener, "scroll_layer")
         self.assertIn("layers = <7>;", scroll_layer)
         self.assertIn(
-            "input-processors = <&zip_xy_to_scroll_mapper &scroll_runtime_input_processor>;",
+            "input-processors = <&zip_mouse_gesture &zip_xy_to_scroll_mapper "
+            "&scroll_runtime_input_processor>;",
             scroll_layer,
         )
 

@@ -12,6 +12,8 @@ manifest:
       url-base: https://github.com/srwi
     - name: yangentai181-wq
       url-base: https://github.com/yangentai181-wq
+    - name: kot149
+      url-base: https://github.com/kot149
   projects:
     - name: zmk
       remote: hyhy-masa
@@ -30,6 +32,9 @@ manifest:
       remote: yangentai181-wq
       revision: b882cd3d571b25cc9c1069c5a0f94a9961f1396b
       path: modules/pmw3610-driver-minimal
+    - name: zmk-mouse-gesture
+      remote: kot149
+      revision: 62f3c9d8ca6763e160b73efc46108c61dd0243a0
     - name: zmk-rgbled-widget
       remote: caksoylar
       revision: e9472d6c

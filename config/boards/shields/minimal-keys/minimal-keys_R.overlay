@@ -2,6 +2,8 @@
 #include <dt-bindings/input/input-event-codes.h>
 #include <input/processors.dtsi>
 #include <input/processors/runtime-input-processor.dtsi>
+#include <mouse-gesture.dtsi>
+#include <dt-bindings/zmk/mouse-gesture.h>
 
 &xiao_serial { status = "disabled"; };
 &default_transform {
@@ -47,11 +49,11 @@
     trackball_listener {
         compatible = "zmk,input-listener";
         device = <&trackball>;
-        input-processors = <&mouse_runtime_input_processor>;
+        input-processors = <&zip_mouse_gesture &mouse_runtime_input_processor>;
 
         scroll_layer {
             layers = <7>;
-            input-processors = <&zip_xy_to_scroll_mapper &scroll_runtime_input_processor>;
+            input-processors = <&zip_mouse_gesture &zip_xy_to_scroll_mapper &scroll_runtime_input_processor>;
         };
     };
 };
@@ -59,6 +61,20 @@
 &scroll_runtime_input_processor {
     scale-divisor = <16>;
     y-invert;
+};
+
+&zip_mouse_gesture {
+    stroke-size = <200>;
+    idle-timeout-ms = <150>;
+    partial-gesture-timeout-ms = <400>;
+    gesture-cooldown-ms = <500>;
+    enable-eager-mode;
+    suppress-movement;
+
+    up { pattern = <GESTURE_UP>; bindings = <&gesture_slot 7>; };
+    down { pattern = <GESTURE_DOWN>; bindings = <&gesture_slot 31>; };
+    left { pattern = <GESTURE_LEFT>; bindings = <&gesture_slot 18>; };
+    right { pattern = <GESTURE_RIGHT>; bindings = <&gesture_slot 20>; };
 };
 
 &spi0 {
