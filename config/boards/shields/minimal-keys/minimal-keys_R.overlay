@@ -56,7 +56,9 @@
         // normal pointer movement.
         gesture_layer {
             layers = <6>;
-            input-processors = <&zip_mouse_gesture>;
+            // The runtime processor runs first so gestures follow the same
+            // rotation/invert settings the pointer uses.
+            input-processors = <&mouse_runtime_input_processor &zip_mouse_gesture>;
         };
 
         scroll_layer {
@@ -74,10 +76,11 @@
 &zip_mouse_gesture {
     // Scoped to the gesture layer above, so no activation key is needed.
     always-active;
-    stroke-size = <200>;
+    // Tuned for a short flick of the ball rather than a long swipe.
+    stroke-size = <100>;
     idle-timeout-ms = <150>;
-    partial-gesture-timeout-ms = <400>;
-    gesture-cooldown-ms = <500>;
+    partial-gesture-timeout-ms = <600>;
+    gesture-cooldown-ms = <250>;
     enable-eager-mode;
     suppress-movement;
 
