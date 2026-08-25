@@ -49,11 +49,19 @@
     trackball_listener {
         compatible = "zmk,input-listener";
         device = <&trackball>;
-        input-processors = <&zip_mouse_gesture &mouse_runtime_input_processor>;
+        input-processors = <&mouse_runtime_input_processor>;
+
+        // Hold the gesture key (L6) to read ball movement as gestures, the way
+        // a Logitech trackball's gesture button works. Releasing it restores
+        // normal pointer movement.
+        gesture_layer {
+            layers = <6>;
+            input-processors = <&zip_mouse_gesture>;
+        };
 
         scroll_layer {
             layers = <7>;
-            input-processors = <&zip_mouse_gesture &zip_xy_to_scroll_mapper &scroll_runtime_input_processor>;
+            input-processors = <&zip_xy_to_scroll_mapper &scroll_runtime_input_processor>;
         };
     };
 };
@@ -64,6 +72,8 @@
 };
 
 &zip_mouse_gesture {
+    // Scoped to the gesture layer above, so no activation key is needed.
+    always-active;
     stroke-size = <200>;
     idle-timeout-ms = <150>;
     partial-gesture-timeout-ms = <400>;

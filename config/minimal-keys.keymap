@@ -31,12 +31,8 @@
     combos {
         compatible = "zmk,combos";
 
-#ifdef CONFIG_ZMK_MOUSE_GESTURE
-        gesture_toggle {
-            key-positions = <7 8>;
-            bindings = <&mouse_gesture_toggle>;
-        };
-#endif
+        // Gesture mode is scoped to the L6 hold in minimal-keys_R.overlay;
+        // no activation combo is needed.
     };
 
     keymap {
