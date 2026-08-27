@@ -51,11 +51,12 @@
         device = <&trackball>;
         input-processors = <&mouse_runtime_input_processor>;
 
-        // Hold the gesture key (L6) to read ball movement as gestures, the way
-        // a Logitech trackball's gesture button works. Releasing it restores
-        // normal pointer movement.
+        // Holding any key bound to the reserved gesture layer reads ball
+        // movement as gestures, the way a Logitech trackball's gesture button
+        // works. Releasing it restores normal pointer movement. Which key that
+        // is stays a keymap choice, editable from Studio.
         gesture_layer {
-            layers = <6>;
+            layers = <9>;
             // The runtime processor runs first so gestures follow the same
             // rotation/invert settings the pointer uses.
             input-processors = <&mouse_runtime_input_processor &zip_mouse_gesture>;
